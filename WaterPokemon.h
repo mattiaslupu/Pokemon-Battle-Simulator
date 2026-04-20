@@ -1,0 +1,13 @@
+//
+// Created by mattiaslupu on 4/14/26.
+//
+
+#ifndef POKEMON_BATTLE_SIMULATOR_WATERPOKEMON_H
+#define POKEMON_BATTLE_SIMULATOR_WATERPOKEMON_H
+
+
+class WaterPokemon {
+};
+
+
+#endif //POKEMON_BATTLE_SIMULATOR_WATERPOKEMON_H

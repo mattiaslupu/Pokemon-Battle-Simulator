@@ -1,0 +1,13 @@
+//
+// Created by mattiaslupu on 4/14/26.
+//
+
+#ifndef POKEMON_BATTLE_SIMULATOR_ICEPOKEMON_H
+#define POKEMON_BATTLE_SIMULATOR_ICEPOKEMON_H
+
+
+class IcePokemon {
+};
+
+
+#endif //POKEMON_BATTLE_SIMULATOR_ICEPOKEMON_H
