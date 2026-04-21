@@ -1,9 +1,9 @@
 #include "Pokemon.h"
+#include "Move.h"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
-
 Pokemon::Pokemon() :id(noPokemons++){
     this->name = "N/A";
     this->hp = 0;
@@ -184,22 +184,7 @@ Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, i
     this->moves.clear();
 }
 
-Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel, std::string evolutionName, std::vector<Move *> moves): id(noPokemons++) {
-    this->name = name;
-    this->hp = hp;
-    this->maxHp = maxHp;
-    this->attack = attack;
-    this->defense = defense;
-    this->spAttack = spAttack;
-    this->spDefense = spDefense;
-    this->speed = speed;
-    this->level = level;
-    this->evLevel = evLevel;
-    this->evolutionName = evolutionName;
-    this->moves = moves;
-}
-
-Pokemon::Pokemon(Pokemon &obj) : id(noPokemons++){
+Pokemon::Pokemon(const Pokemon &obj) : id(noPokemons++){
     this->name = obj.name;
     this->hp = obj.hp;
     this->maxHp = obj.maxHp;
@@ -279,7 +264,7 @@ int Pokemon::getEvLevel() const {
     return evLevel;
 }
 
-std::ostream& operator<<(std::ostream& os, Pokemon &obj) {
+std::ostream& operator<<(std::ostream& os, const Pokemon &obj) {
     ///TO DO: Error handle
     os<<"Id: "<<obj.getId()<<"\n";
     os<<"Name: "<<obj.getName()<<"\n";

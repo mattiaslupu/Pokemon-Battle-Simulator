@@ -1,13 +1,22 @@
-//
-// Created by mattiaslupu on 4/14/26.
-//
-
-#ifndef POKEMON_BATTLE_SIMULATOR_GRASSPOKEMON_H
-#define POKEMON_BATTLE_SIMULATOR_GRASSPOKEMON_H
-
-
-class GrassPokemon {
+#pragma once
+#include "Pokemon.h"
+class GrassPokemon : public virtual Pokemon {
+public:
+    GrassPokemon();
+    GrassPokemon(std::string);
+    GrassPokemon(std::string, int);
+    GrassPokemon(std::string, int, int);
+    GrassPokemon(std::string, int, int, int);
+    GrassPokemon(std::string, int, int, int, int);
+    GrassPokemon(std::string, int, int, int, int, int);
+    GrassPokemon(std::string, int, int, int, int, int, int);
+    GrassPokemon(std::string, int, int, int, int, int, int, int);
+    GrassPokemon(std::string, int, int, int, int, int, int, int, int);
+    GrassPokemon(std::string, int, int, int, int, int, int, int, int, int);
+    GrassPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
+    GrassPokemon(const GrassPokemon &obj);
+    GrassPokemon& operator=(const GrassPokemon &obj);
+    ~GrassPokemon();
+    Type getType() const override;
+    Pokemon* evolve() override;
 };
-
-
-#endif //POKEMON_BATTLE_SIMULATOR_GRASSPOKEMON_H

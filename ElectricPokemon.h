@@ -1,13 +1,25 @@
-//
-// Created by mattiaslupu on 4/14/26.
-//
+#pragma once
+#include "Pokemon.h"
 
-#ifndef POKEMON_BATTLE_SIMULATOR_ELECTRICPOKEMON_H
-#define POKEMON_BATTLE_SIMULATOR_ELECTRICPOKEMON_H
+class ElectricPokemon : public virtual Pokemon {
+public:
+    ElectricPokemon();
+    ElectricPokemon(std::string);
+    ElectricPokemon(std::string, int);
+    ElectricPokemon(std::string, int, int);
+    ElectricPokemon(std::string, int, int, int);
+    ElectricPokemon(std::string, int, int, int, int);
+    ElectricPokemon(std::string, int, int, int, int, int);
+    ElectricPokemon(std::string, int, int, int, int, int, int);
+    ElectricPokemon(std::string, int, int, int, int, int, int, int);
+    ElectricPokemon(std::string, int, int, int, int, int, int, int, int);
+    ElectricPokemon(std::string, int, int, int, int, int, int, int, int, int);
+    ElectricPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
 
+    ElectricPokemon(const ElectricPokemon &obj);
+    ElectricPokemon& operator=(const ElectricPokemon &obj);
+    ~ElectricPokemon();
 
-class ElectricPokemon {
+    Type getType() const override;
+    Pokemon* evolve() override;
 };
-
-
-#endif //POKEMON_BATTLE_SIMULATOR_ELECTRICPOKEMON_H

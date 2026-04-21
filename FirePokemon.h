@@ -1,13 +1,24 @@
-//
-// Created by mattiaslupu on 4/14/26.
-//
+#pragma once
 
-#ifndef POKEMON_BATTLE_SIMULATOR_FIREPOKEMON_H
-#define POKEMON_BATTLE_SIMULATOR_FIREPOKEMON_H
-
-
-class FirePokemon {
+class FirePokemon : public virtual Pokemon{
+public:
+    FirePokemon();
+    FirePokemon(std::string);
+    FirePokemon(std::string, int);
+    FirePokemon(std::string, int, int);
+    FirePokemon(std::string, int, int, int);
+    FirePokemon(std::string, int, int, int, int);
+    FirePokemon(std::string, int, int, int, int, int);
+    FirePokemon(std::string, int, int, int, int, int, int);
+    FirePokemon(std::string, int, int, int, int, int, int, int);
+    FirePokemon(std::string, int, int, int, int, int, int, int, int);
+    FirePokemon(std::string, int, int, int, int, int, int, int, int, int);
+    FirePokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
+    FirePokemon(const FirePokemon &obj);
+    FirePokemon& operator=(const FirePokemon &obj);
+    ~FirePokemon();
+    Type getType() const override;
+    Pokemon* evolve() override;
 };
 
 
-#endif //POKEMON_BATTLE_SIMULATOR_FIREPOKEMON_H

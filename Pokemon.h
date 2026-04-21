@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 
+class Move;
+enum Type { FIRE, WATER, GRASS, ELECTRIC, ICE, ROCK, FLYING, FIRE_FLYING };
+
 class Pokemon {
 protected:
     const int id;
@@ -32,19 +35,18 @@ public:
     Pokemon(std::string, int, int, int, int, int, int, int, int);
     Pokemon(std::string, int, int, int, int, int, int, int, int, int);
     Pokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
-    Pokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, std::vector<Move*>);
-    Pokemon(Pokemon &obj);
+    Pokemon(const Pokemon &obj);
     Pokemon& operator=(const Pokemon &obj);
-    ~Pokemon();
+    virtual ~Pokemon();
     friend std::istream& operator>>(std::istream& is, Pokemon &obj);
-    friend std::ostream& operator<<(std::ostream& os, Pokemon &obj);
+    friend std::ostream& operator<<(std::ostream& os, const Pokemon &obj);
     void takeDamage(int);
     void levelUp();
     bool isFainted() const;
     void learnMove(Move *);
     void forgetMove(int);
-    int getId();
-    std::string getName();
+    int getId() const;
+    std::string getName() const;
     void setName(std:: string newName);
     int getHp() const;
     void setHp(int);
@@ -57,8 +59,8 @@ public:
     int getLevel() const;
     void setLevel(int);
     int getEvLevel() const;
-    virtual std::string getType() const =0;
-    virtual Pokemon& evolve() =0;
+    virtual Type getType() const =0;
+    virtual Pokemon* evolve() =0;
 };
 
 
