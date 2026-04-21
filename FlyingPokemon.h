@@ -20,6 +20,6 @@ public:
     FlyingPokemon& operator=(const FlyingPokemon &obj);
     ~FlyingPokemon();
 
-    Type FlyingPokemon::getType() const override;
+    Type getType() const override;
     Pokemon* evolve() override;
 };
