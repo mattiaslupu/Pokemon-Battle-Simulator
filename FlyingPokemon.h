@@ -15,7 +15,8 @@ public:
     FlyingPokemon(std::string, int, int, int, int, int, int, int, int);
     FlyingPokemon(std::string, int, int, int, int, int, int, int, int, int);
     FlyingPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
-
+    FlyingPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType);
+    FlyingPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType, int);
     FlyingPokemon(const FlyingPokemon &obj);
     FlyingPokemon& operator=(const FlyingPokemon &obj);
     ~FlyingPokemon();

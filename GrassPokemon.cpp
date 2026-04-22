@@ -14,6 +14,17 @@ GrassPokemon::GrassPokemon(std::string name, int hp, int maxHp, int attack, int 
 GrassPokemon::GrassPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel) {}
 GrassPokemon::GrassPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel, std::string evolutionName) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel, evolutionName) {}
 
+GrassPokemon::GrassPokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                           int spAttack, int spDefense, int speed, int level, int evLevel,
+                           std::string evolutionName, StatusType status)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status) {}
+
+GrassPokemon::GrassPokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                           int spAttack, int spDefense, int speed, int level, int evLevel,
+                           std::string evolutionName, StatusType status, int statusDuration)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status, statusDuration) {}
 
 GrassPokemon::GrassPokemon(const GrassPokemon &obj) : Pokemon(obj) {}
 

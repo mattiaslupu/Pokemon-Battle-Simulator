@@ -1,4 +1,5 @@
 #pragma once
+#include "Pokemon.h"
 
 class FirePokemon : public virtual Pokemon{
 public:
@@ -14,9 +15,11 @@ public:
     FirePokemon(std::string, int, int, int, int, int, int, int, int);
     FirePokemon(std::string, int, int, int, int, int, int, int, int, int);
     FirePokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
+    FirePokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType);
+    FirePokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType, int);
     FirePokemon(const FirePokemon &obj);
     FirePokemon& operator=(const FirePokemon &obj);
-    ~FirePokemon();
+    ~FirePokemon() override;
     Type getType() const override;
     Pokemon* evolve() override;
 };

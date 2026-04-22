@@ -1,4 +1,4 @@
-#include "Pokemon.h"
+
 #include "WaterPokemon.h"
 
 WaterPokemon::WaterPokemon() : Pokemon(){}
@@ -13,6 +13,18 @@ WaterPokemon::WaterPokemon(std::string name, int hp, int maxHp, int attack, int 
 WaterPokemon::WaterPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level){}
 WaterPokemon::WaterPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel){}
 WaterPokemon::WaterPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel, std::string evolutionName) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel, evolutionName){};
+WaterPokemon::WaterPokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                           int spAttack, int spDefense, int speed, int level, int evLevel,
+                           std::string evolutionName, StatusType status)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status) {}
+
+WaterPokemon::WaterPokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                           int spAttack, int spDefense, int speed, int level, int evLevel,
+                           std::string evolutionName, StatusType status, int statusDuration)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status, statusDuration) {}
+
 WaterPokemon::WaterPokemon(const WaterPokemon &obj): Pokemon(obj) {}
 
 WaterPokemon& WaterPokemon::operator=(const WaterPokemon& obj) {

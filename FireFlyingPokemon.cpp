@@ -29,6 +29,19 @@ FireFlyingPokemon::FireFlyingPokemon(std::string name, int hp, int maxHp, int at
 
 FireFlyingPokemon::FireFlyingPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel, std::string evolutionName) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel, evolutionName), FirePokemon(), FlyingPokemon(){}
 
+FireFlyingPokemon::FireFlyingPokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                                     int spAttack, int spDefense, int speed, int level, int evLevel,
+                                     std::string evolutionName, StatusType status)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status),
+      FirePokemon(), FlyingPokemon() {}
+
+FireFlyingPokemon::FireFlyingPokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                                     int spAttack, int spDefense, int speed, int level, int evLevel,
+                                     std::string evolutionName, StatusType status, int statusDuration)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status, statusDuration),
+      FirePokemon(), FlyingPokemon() {}
 FireFlyingPokemon::FireFlyingPokemon(const FireFlyingPokemon &obj) : Pokemon(obj), FirePokemon(), FlyingPokemon(){}
 
 FireFlyingPokemon &FireFlyingPokemon::operator=(const FireFlyingPokemon &obj) {

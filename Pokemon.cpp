@@ -17,6 +17,8 @@ Pokemon::Pokemon() :id(noPokemons++){
     this->evLevel = 0;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name) :id(noPokemons++){
@@ -32,6 +34,8 @@ Pokemon::Pokemon(std::string name) :id(noPokemons++){
     this->evLevel = 0;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name, int hp): id(noPokemons++) {
@@ -47,6 +51,8 @@ Pokemon::Pokemon(std::string name, int hp): id(noPokemons++) {
     this->evLevel = 0;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name, int hp, int maxHp) : id(noPokemons++){
@@ -62,6 +68,8 @@ Pokemon::Pokemon(std::string name, int hp, int maxHp) : id(noPokemons++){
     this->evLevel = 0;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack) : id(noPokemons++){
@@ -77,6 +85,8 @@ Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack) : id(noPokemon
     this->evLevel = 0;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense) : id(noPokemons++){
@@ -92,6 +102,8 @@ Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense) :
     this->evLevel = 0;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack) : id(noPokemons++){
@@ -107,6 +119,8 @@ Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, i
     this->evLevel = 0;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense) : id(noPokemons++){
@@ -122,6 +136,8 @@ Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, i
     this->evLevel = 0;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed) : id(noPokemons++){
@@ -137,6 +153,8 @@ Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, i
     this->evLevel = 0;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level) : id(noPokemons++){
@@ -152,6 +170,8 @@ Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, i
     this->evLevel = 0;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel) : id(noPokemons++){
@@ -167,6 +187,8 @@ Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, i
     this->evLevel = evLevel;
     this->evolutionName = "None";
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel, std::string evolutionName) : id(noPokemons++){
@@ -182,6 +204,8 @@ Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, i
     this->evLevel = evLevel;
     this->evolutionName = evolutionName;
     this->moves.clear();
+    this->status=NONE;
+    this->statusDuration=0;
 }
 
 Pokemon::Pokemon(const Pokemon &obj) : id(noPokemons++){
@@ -197,7 +221,19 @@ Pokemon::Pokemon(const Pokemon &obj) : id(noPokemons++){
     this->evLevel = obj.evLevel;
     this->evolutionName = obj.evolutionName;
     this->moves = obj.moves;
+    this->status = obj.status;
+    this->statusDuration = obj.statusDuration;
 }
+Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel, std::string evolutionName, StatusType status): id(noPokemons++), name(name), hp(hp), maxHp(maxHp), attack(attack),
+      defense(defense), spAttack(spAttack), spDefense(spDefense), speed(speed),
+      level(level), evLevel(evLevel), evolutionName(evolutionName),
+      status(status), statusDuration(0) {}
+
+Pokemon::Pokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel, std::string evolutionName, StatusType status, int statusDuration)
+    : id(noPokemons++), name(name), hp(hp), maxHp(maxHp), attack(attack),
+      defense(defense), spAttack(spAttack), spDefense(spDefense), speed(speed),
+      level(level), evLevel(evLevel), evolutionName(evolutionName),
+      status(status), statusDuration(statusDuration) {}
 
 Pokemon& Pokemon::operator=(const Pokemon &obj) {
     if (this==&obj) return *this;
@@ -213,11 +249,17 @@ Pokemon& Pokemon::operator=(const Pokemon &obj) {
     this->evLevel = obj.evLevel;
     this->evolutionName = obj.evolutionName;
     this->moves = obj.moves;
-
+    this->status = obj.status;
+    this->statusDuration = obj.statusDuration;
     return *this;
 }
 
-Pokemon::~Pokemon(){};
+Pokemon::~Pokemon() {
+    for(size_t i = 0; i < moves.size(); i++) {
+        delete moves[i];
+    }
+    moves.clear();
+};
 void Pokemon::setName(std::string newName) {
     name = newName;
 }
@@ -268,22 +310,27 @@ std::ostream& operator<<(std::ostream& os, const Pokemon &obj) {
     ///TO DO: Error handle
     os<<"Id: "<<obj.getId()<<"\n";
     os<<"Name: "<<obj.getName()<<"\n";
-    os<<"Attack: "<<"\n";
-    os<<"Defense"<<"\n";
-    os<<"HP: "<<"\n";
-    os<<"Max HP: "<<"\n";
-    os<<"Special Attack: "<<"\n";
-    os<<"Special Defense: "<<"\n";
-    os<<"Speed: "<<"\n";
-    os<<"Level: "<<"\n";
-    if (obj.evLevel!=0) {
-        os<<"Evolution Level: "<<"\n";
-        os<<"Evolution Name: "<<"\n";
-    }
-    else os<<"This Pokemon does not evolve";
-    os<<"Moves Learned: "<<"\n";
-    return os;
+    os<<"Attack: "<<obj.getAttack()<<"\n";
+    os<<"Defense: "<<obj.getDefense()<<"\n";
+    os<<"HP: "<<obj.getHp()<<"\n";
+    os<<"Max HP: "<<obj.getMaxHp()<<"\n";
+    os<<"Special Attack: "<<obj.getSpAttack()<<"\n";
+    os<<"Special Defense: "<<obj.getSpDefense()<<"\n";
+    os<<"Speed: "<<obj.getSpeed()<<"\n";
+    os<<"Level: "<<obj.getLevel()<<"\n";
 
+    if (obj.getEvLevel() != 0) {
+        os<<"Evolution Level: "<<obj.getEvLevel()<<"\n";
+        os<<"Evolution Name: "<<obj.evolutionName<<"\n";
+    }
+    else os<<"This Pokemon does not evolve\n";
+
+    os<<"Moves Learned: "<<obj.moves.size()<<"\n"; // Aratam cate mutari stie
+
+    // AFISARE STATUS CURENT
+    os<<"Status: "<<obj.status<<"\n";
+    os<<"Status duration: "<<obj.statusDuration<<"\n";
+    return os;
 }
 
 std::istream& operator>>(std::istream &is, Pokemon &obj) {
@@ -305,6 +352,7 @@ std::istream& operator>>(std::istream &is, Pokemon &obj) {
     is>>hp;
     obj.setHp(hp);
     std::cout<<"Max HP: ";
+    is >> maxHp;
     obj.maxHp=maxHp;
     std::cout<<"Attack: ";
     is>>attack;
@@ -331,6 +379,17 @@ std::istream& operator>>(std::istream &is, Pokemon &obj) {
     std::string evName;
     is>>evName;
     obj.evolutionName=evName;
+    int statusInput;
+    std::cout << "Current Status (0=NONE, 1=BURN, 2=SLEEP, 3=PARALYSIS, 4=POISON): ";
+    is >> statusInput;
+    obj.status = static_cast<StatusType>(statusInput);
+
+    if (obj.status != NONE) {
+        std::cout << "Durata statusului (cate ture mai are): ";
+        is >> obj.statusDuration;
+    } else {
+        obj.statusDuration = 0;
+    }
     return is;
 }
 
@@ -381,4 +440,11 @@ void Pokemon::forgetMove(int index) {
 bool Pokemon::isFainted() const {
     if (hp<=0) return true;
     else return false;
+}
+
+void Pokemon::applyStatus(StatusType type, int duration) {
+    if (this->status == NONE) {
+        this->status = type;
+        this->statusDuration = duration;
+    }
 }

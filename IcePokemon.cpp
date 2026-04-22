@@ -13,7 +13,17 @@ IcePokemon::IcePokemon(std::string name, int hp, int maxHp, int attack, int defe
 IcePokemon::IcePokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level) {}
 IcePokemon::IcePokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel) {}
 IcePokemon::IcePokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel, std::string evolutionName) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel, evolutionName) {}
+IcePokemon::IcePokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                       int spAttack, int spDefense, int speed, int level, int evLevel,
+                       std::string evolutionName, StatusType status)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status) {}
 
+IcePokemon::IcePokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                       int spAttack, int spDefense, int speed, int level, int evLevel,
+                       std::string evolutionName, StatusType status, int statusDuration)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status, statusDuration) {}
 IcePokemon::IcePokemon(const IcePokemon &obj) : Pokemon(obj) {}
 
 IcePokemon& IcePokemon::operator=(const IcePokemon& obj) {

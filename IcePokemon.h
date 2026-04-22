@@ -15,7 +15,8 @@ public:
     IcePokemon(std::string, int, int, int, int, int, int, int, int);
     IcePokemon(std::string, int, int, int, int, int, int, int, int, int);
     IcePokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
-
+    IcePokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType);
+    IcePokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType, int);
     IcePokemon(const IcePokemon &obj);
     IcePokemon& operator=(const IcePokemon &obj);
     ~IcePokemon();

@@ -2,9 +2,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include "Move.h"
 class Move;
-enum Type { FIRE, WATER, GRASS, ELECTRIC, ICE, ROCK, FLYING, FIRE_FLYING };
+enum Type { NORMAL, FIRE, WATER, GRASS, ELECTRIC, ICE, ROCK, FLYING, FIRE_FLYING };
 
 class Pokemon {
 protected:
@@ -22,6 +22,8 @@ protected:
     int evLevel;
     std::string evolutionName;
     std::vector<Move*> moves;
+    StatusType status;
+    int statusDuration;
 public:
     Pokemon();
     Pokemon(std::string);
@@ -35,6 +37,8 @@ public:
     Pokemon(std::string, int, int, int, int, int, int, int, int);
     Pokemon(std::string, int, int, int, int, int, int, int, int, int);
     Pokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
+    Pokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType);
+    Pokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType, int);
     Pokemon(const Pokemon &obj);
     Pokemon& operator=(const Pokemon &obj);
     virtual ~Pokemon();
@@ -59,6 +63,7 @@ public:
     int getLevel() const;
     void setLevel(int);
     int getEvLevel() const;
+    void applyStatus(StatusType type, int duration);
     virtual Type getType() const =0;
     virtual Pokemon* evolve() =0;
 };

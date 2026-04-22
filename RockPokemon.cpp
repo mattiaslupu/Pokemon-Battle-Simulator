@@ -13,7 +13,17 @@ RockPokemon::RockPokemon(std::string name, int hp, int maxHp, int attack, int de
 RockPokemon::RockPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level) {}
 RockPokemon::RockPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel) {}
 RockPokemon::RockPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel, std::string evolutionName) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel, evolutionName) {}
+RockPokemon::RockPokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                         int spAttack, int spDefense, int speed, int level, int evLevel,
+                         std::string evolutionName, StatusType status)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status) {}
 
+RockPokemon::RockPokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                         int spAttack, int spDefense, int speed, int level, int evLevel,
+                         std::string evolutionName, StatusType status, int statusDuration)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status, statusDuration) {}
 RockPokemon::RockPokemon(const RockPokemon &obj) : Pokemon(obj) {}
 
 RockPokemon& RockPokemon::operator=(const RockPokemon& obj) {

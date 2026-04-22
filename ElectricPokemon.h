@@ -15,6 +15,8 @@ public:
     ElectricPokemon(std::string, int, int, int, int, int, int, int, int);
     ElectricPokemon(std::string, int, int, int, int, int, int, int, int, int);
     ElectricPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
+    ElectricPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType);
+    ElectricPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType, int);
 
     ElectricPokemon(const ElectricPokemon &obj);
     ElectricPokemon& operator=(const ElectricPokemon &obj);

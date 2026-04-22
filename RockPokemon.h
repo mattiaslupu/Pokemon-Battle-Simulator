@@ -15,6 +15,8 @@ public:
     RockPokemon(std::string, int, int, int, int, int, int, int, int);
     RockPokemon(std::string, int, int, int, int, int, int, int, int, int);
     RockPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
+    RockPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType);
+    RockPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType, int);
     RockPokemon(const RockPokemon &obj);
     RockPokemon& operator=(const RockPokemon &obj);
     ~RockPokemon();

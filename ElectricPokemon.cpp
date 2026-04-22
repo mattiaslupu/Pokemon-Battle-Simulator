@@ -13,7 +13,17 @@ ElectricPokemon::ElectricPokemon(std::string name, int hp, int maxHp, int attack
 ElectricPokemon::ElectricPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level) {}
 ElectricPokemon::ElectricPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel) {}
 ElectricPokemon::ElectricPokemon(std::string name, int hp, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, int level, int evLevel, std::string evolutionName) : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel, evolutionName) {}
+ElectricPokemon::ElectricPokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                                 int spAttack, int spDefense, int speed, int level, int evLevel,
+                                 std::string evolutionName, StatusType status)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status) {}
 
+ElectricPokemon::ElectricPokemon(std::string name, int hp, int maxHp, int attack, int defense,
+                                 int spAttack, int spDefense, int speed, int level, int evLevel,
+                                 std::string evolutionName, StatusType status, int statusDuration)
+    : Pokemon(name, hp, maxHp, attack, defense, spAttack, spDefense, speed,
+              level, evLevel, evolutionName, status, statusDuration) {}
 ElectricPokemon::ElectricPokemon(const ElectricPokemon &obj) : Pokemon(obj) {}
 
 ElectricPokemon& ElectricPokemon::operator=(const ElectricPokemon& obj) {

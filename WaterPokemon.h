@@ -1,7 +1,5 @@
 #pragma once
 #include "Pokemon.h"
-#include <vector>
-#include <string>
 
 class WaterPokemon : public virtual Pokemon {
 public:
@@ -17,7 +15,8 @@ public:
     WaterPokemon(std::string, int, int, int, int, int, int, int, int);
     WaterPokemon(std::string, int, int, int, int, int, int, int, int, int);
     WaterPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string);
-    WaterPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, std::vector<Move*>);
+    WaterPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType);
+    WaterPokemon(std::string, int, int, int, int, int, int, int, int, int, std::string, StatusType, int);
     WaterPokemon(const WaterPokemon &obj);
     WaterPokemon& operator=(const WaterPokemon &obj);
     ~WaterPokemon();
