@@ -90,7 +90,7 @@ std::ostream &operator>>(std::ostream &os, const Move &obj) {
     os<<"Name: "<<obj.getName()<<"\n";
     os<<"Accuracy: "<<obj.accuracy<<"\n";
     os<<"Type: "<<"\n";
-    os<<"PP: "<< obj.getPp()<<" ";
+    os<<"PP: "<< obj.pp<<" ";
     os<<"Max PP: "<<obj.maxPp<<" ";
     os<<"Category"<<obj.category<<" ";
     return os;
@@ -107,4 +107,8 @@ void Move::useMove() {
 
 void Move::restorePP() {
     pp=maxPp;
+}
+
+std::string Move::getName() const {
+    return name;
 }

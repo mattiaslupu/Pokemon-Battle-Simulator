@@ -30,6 +30,7 @@ public:
     Move& operator=(const Move &obj);
     friend std::istream& operator<<(std::istream &is, Move& obj);
     friend std::ostream& operator>>(std::ostream &os, const Move & obj);
+    std::string getName() const;
     void useMove();
     void restorePP();
     virtual int getDamage(const Pokemon& attacker, const Pokemon& defender) const = 0;

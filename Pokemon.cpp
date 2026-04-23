@@ -448,3 +448,11 @@ void Pokemon::applyStatus(StatusType type, int duration) {
         this->statusDuration = duration;
     }
 }
+
+void Pokemon::heal() {
+    hp=maxHp;
+    status=NONE;
+    for (int i=1; i<moves.size(); i++) {
+        moves[i]->restorePP();
+    }
+}

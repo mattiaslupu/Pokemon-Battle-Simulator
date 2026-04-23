@@ -64,6 +64,7 @@ public:
     void setLevel(int);
     int getEvLevel() const;
     void applyStatus(StatusType type, int duration);
+    void heal();
     virtual Type getType() const =0;
     virtual Pokemon* evolve() =0;
 };
