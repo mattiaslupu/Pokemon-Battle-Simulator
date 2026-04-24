@@ -41,4 +41,6 @@ add_executable(Pokemon_Battle_Simulator
         TypeChart.h
         utils.cpp
         utils.h
+        Pokedex.cpp
+        Pokedex.h
 )
