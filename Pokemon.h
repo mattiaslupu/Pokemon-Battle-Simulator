@@ -4,7 +4,7 @@
 #include <vector>
 #include "Move.h"
 class Move;
-enum Type { NORMAL, FIRE, WATER, GRASS, ELECTRIC, ICE, ROCK, FLYING, FIRE_FLYING };
+enum Type { NORMAL, FIRE, WATER, GRASS, ELECTRIC, ICE, ROCK, FLYING, FIRE_FLYING, NUM_TYPES };
 
 class Pokemon {
 protected:
