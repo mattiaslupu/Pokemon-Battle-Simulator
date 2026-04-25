@@ -26,6 +26,7 @@ public:
     Move(std::string, int, Type, int, int, MoveCategory);
     Move(const Move &obj);
     virtual ~Move();
+    Type getType();
     MoveCategory getCategory() const;
     Move& operator=(const Move &obj);
     friend std::istream& operator<<(std::istream &is, Move& obj);

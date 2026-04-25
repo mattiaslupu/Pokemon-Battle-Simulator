@@ -449,10 +449,27 @@ void Pokemon::applyStatus(StatusType type, int duration) {
     }
 }
 
+void Pokemon::transferProgressTo(Pokemon* evolvedForm) {
+    if (evolvedForm == nullptr) return;
+    evolvedForm->level = this->level; // Nivelul atins
+    evolvedForm->moves = this->moves;
+    this->moves.clear();
+    evolvedForm->hp = evolvedForm->maxHp;
+    evolvedForm->status = NONE;
+}
+
+std::vector<Move *> Pokemon::getMoves() {
+    return moves;
+}
+
 void Pokemon::heal() {
     hp=maxHp;
     status=NONE;
     for (int i=1; i<moves.size(); i++) {
         moves[i]->restorePP();
     }
+}
+
+std::string Pokemon::getEvolutionName() const{
+    return evolutionName;
 }

@@ -67,9 +67,44 @@ void Trainer::addPokemon(Pokemon * obj) {
 
 }
 
-bool Trainer::switchPokemon(int index) {
-    //TO DO
+void Trainer::replacePokemon(int index, Pokemon * newPokemon) {
+    if (index >= 0 && index < team.size()) {
+        team[index] = newPokemon;
+    } else {
+        std::cerr << "Error: Invalid index for replacing Pokemon!\n";
+    }
+}
 
+Pokemon *Trainer::getPokemon(int index) {
+    //Error handle
+    return team[index];
+}
+
+std::string Trainer::getName() {
+    return name;
+}
+
+bool Trainer::switchPokemon(int index) {
+    if (index < 1 || index > team.size()) {
+        std::cout << "Invalid Pokemon index!\n";
+        return false;
+    }
+
+    int realIndex = index - 1;
+
+    if (realIndex == activePokemonIndex) {
+        std::cout << team[realIndex]->getName() << " is already in battle!\n";
+        return false;
+    }
+
+    if (team[realIndex]->isFainted()) {
+        std::cout << team[realIndex]->getName() << " has fainted and cannot fight!\n";
+        return false;
+    }
+    activePokemonIndex = realIndex;
+    std::cout << "Go, " << team[activePokemonIndex]->getName() << "!\n";
+
+    return true;
 }
 
 bool Trainer::hasAlivePokemon() {

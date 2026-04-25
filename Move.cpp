@@ -65,6 +65,10 @@ Move &Move::operator=(const Move &obj) {
     return *this;
 }
 
+Type Move::getType() {
+    return type;
+}
+
 std::istream &operator<<(std::istream &is, Move &obj) {
     std::string typeStr, categoryStr;
     std::cout<<"Name: ";
