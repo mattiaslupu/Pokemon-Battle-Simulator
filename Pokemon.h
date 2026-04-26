@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 #include "Move.h"
+#include "utils.h"
 class Move;
-enum Type { NORMAL, FIRE, WATER, GRASS, ELECTRIC, ICE, ROCK, FLYING, FIRE_FLYING, NUM_TYPES };
 
 class Pokemon {
 protected:
@@ -69,7 +69,6 @@ public:
     void heal();
     virtual Type getType() const =0;
     std::vector<Move*> getMoves();
-    virtual Pokemon* evolve() =0;
 };
 
 

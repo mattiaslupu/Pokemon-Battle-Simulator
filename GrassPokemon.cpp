@@ -39,5 +39,3 @@ Type GrassPokemon::getType() const {
     return GRASS;
 }
 
-Pokemon* GrassPokemon::evolve() {
-}

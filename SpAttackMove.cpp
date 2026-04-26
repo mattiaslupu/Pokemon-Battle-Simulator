@@ -1,6 +1,6 @@
 
 #include "SpAttackMove.h"
-
+#include "Pokemon.h"
 
 SpAttackMove::SpAttackMove() : PhysicalMove() {}
 

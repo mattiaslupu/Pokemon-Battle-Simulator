@@ -20,5 +20,4 @@ public:
     GrassPokemon& operator=(const GrassPokemon &obj);
     ~GrassPokemon();
     Type getType() const override;
-    Pokemon* evolve() override;
 };

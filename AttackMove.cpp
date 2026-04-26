@@ -1,4 +1,5 @@
 #include "AttackMove.h"
+#include "Pokemon.h"
 
 AttackMove::AttackMove() : PhysicalMove() {}
 

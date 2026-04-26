@@ -1,5 +1,6 @@
 
 #include "PhysicalMove.h"
+#include "Pokemon.h"
 
 PhysicalMove::PhysicalMove() : Move(), power(0){}
 

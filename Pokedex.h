@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cstdlib>
 
 class Pokedex {
 private:
@@ -15,6 +16,7 @@ public:
     Pokedex& operator=(const Pokedex& other);
     void loadFromFile(const std::string& filename);
     Pokemon* createByName(const std::string& name) const;
+    Pokemon* getRandomPokemon() const;
     friend std::ostream& operator<<(std::ostream& os, const Pokedex& obj);
     friend std::istream& operator>>(std::istream& is, Pokedex& obj);
 

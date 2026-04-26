@@ -45,4 +45,6 @@ add_executable(Pokemon_Battle_Simulator
         Pokedex.h
         Battle.cpp
         Battle.h
+        Menu.cpp
+        Menu.h
 )

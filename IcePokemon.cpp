@@ -37,6 +37,3 @@ Type IcePokemon::getType() const {
     return ICE;
 }
 
-Pokemon* IcePokemon::evolve() {
-
-}

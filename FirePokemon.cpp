@@ -30,6 +30,3 @@ Type FirePokemon::getType() const{
     return FIRE;
 };
 
-Pokemon *FirePokemon::evolve() {
-    ///TO DO
-}

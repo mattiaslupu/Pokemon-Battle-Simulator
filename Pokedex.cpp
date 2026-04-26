@@ -72,7 +72,7 @@ Pokedex::~Pokedex() {
 }
 
 Pokemon *Pokedex::createByName(const std::string &name) const {
-    for (int i = 0; i <= entries.size(); i ++) {
+    for (int i = 0; i < entries.size(); i ++) {
         if (entries[i]->getName() == name) {
             if (entries[i] -> getType() == FIRE) {
                 return new FirePokemon(*dynamic_cast<FirePokemon*>(entries[i]));
@@ -103,6 +103,11 @@ Pokemon *Pokedex::createByName(const std::string &name) const {
         }
     }
     throw std::invalid_argument("Pokemon " + name + " does not exist in Pokedex!");
+}
+
+Pokemon* Pokedex::getRandomPokemon() const {
+    int randomIndex = rand() % entries.size();
+    return createByName(entries[randomIndex]->getName());
 }
 
 
@@ -178,7 +183,7 @@ void Pokedex::loadFromFile(const std::string& filename) {
         std::getline(ss, tempStr, ','); spDef = std::stoi(tempStr);
         std::getline(ss, tempStr, ','); speed = std::stoi(tempStr);
         std::getline(ss, tempStr, ','); evoLevel = std::stoi(tempStr);
-        std::getline(ss, evolutionName, ',');
+        std::getline(ss, evolutionName);
         int currentLevel = 1;
         if (typeStr == "FIRE") {
             entries.push_back(new FirePokemon(name, hpCur, hpMax, attack, defense, spAtk, spDef, speed, currentLevel, evoLevel, evolutionName));

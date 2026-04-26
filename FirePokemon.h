@@ -21,7 +21,6 @@ public:
     FirePokemon& operator=(const FirePokemon &obj);
     ~FirePokemon() override;
     Type getType() const override;
-    Pokemon* evolve() override;
 };
 
 

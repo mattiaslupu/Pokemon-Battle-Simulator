@@ -1,5 +1,5 @@
-
 #include "Trainer.h"
+int Trainer::noTrainers = 0;
 
 Trainer::Trainer() :id(noTrainers++), name("N/A"), activePokemonIndex(0){
 
@@ -82,6 +82,10 @@ Pokemon *Trainer::getPokemon(int index) {
 
 std::string Trainer::getName() {
     return name;
+}
+
+void Trainer::setName(std::string newName) {
+    this->name=newName;
 }
 
 bool Trainer::switchPokemon(int index) {

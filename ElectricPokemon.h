@@ -23,5 +23,4 @@ public:
     ~ElectricPokemon();
 
     Type getType() const override;
-    Pokemon* evolve() override;
 };

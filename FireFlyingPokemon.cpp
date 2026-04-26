@@ -57,6 +57,3 @@ Type FireFlyingPokemon::getType() const {
     return FIRE_FLYING;
 }
 
-Pokemon *FireFlyingPokemon::evolve() {
-
-}

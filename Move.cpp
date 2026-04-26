@@ -1,5 +1,5 @@
 #include "Move.h"
-
+int Move::noMoves = 0;
 Move::Move() : id(noMoves++), name("N/A"), accuracy(0), type(NORMAL), pp(0), maxPp(0), category(PHYSICAL) {
 }
 

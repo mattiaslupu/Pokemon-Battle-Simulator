@@ -1,11 +1,11 @@
 #pragma once
-#include "Pokemon.h"
+#include "utils.h"
 #include <iostream>
 #include <string>
 
-enum MoveCategory { PHYSICAL, SPECIAL, STATUS };
-enum StatusType { NONE, BURN, SLEEP, PARALYSIS, POISON };
 
+
+class Pokemon;
 class Move {
 protected:
     const int id;

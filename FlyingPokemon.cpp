@@ -37,6 +37,3 @@ Type FlyingPokemon::getType() const {
     return FLYING;
 }
 
-Pokemon* FlyingPokemon::evolve() {
-
-}

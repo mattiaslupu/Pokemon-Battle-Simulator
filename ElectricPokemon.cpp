@@ -37,6 +37,3 @@ Type ElectricPokemon::getType() const {
     return ELECTRIC;
 }
 
-Pokemon* ElectricPokemon::evolve() {
-
-}

@@ -1,6 +1,9 @@
 #pragma once
 #include "Pokemon.h"
 
+
+class Pokemon;
+
 class Trainer {
 private:
     const int id;
@@ -14,6 +17,7 @@ public:
     Trainer(std::string, int);
     Trainer(const Trainer & obj);
     ~Trainer();
+    void setName(std::string);
     Trainer& operator=(const Trainer& obj);
     friend std::istream& operator>>(std::istream&is, Trainer &obj);
     friend std::ostream& operator<<(std::ostream&os, const Trainer &obj);

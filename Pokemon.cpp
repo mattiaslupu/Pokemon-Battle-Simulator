@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+
+int Pokemon::noPokemons = 0;
 Pokemon::Pokemon() :id(noPokemons++){
     this->name = "N/A";
     this->hp = 0;
@@ -325,9 +327,8 @@ std::ostream& operator<<(std::ostream& os, const Pokemon &obj) {
     }
     else os<<"This Pokemon does not evolve\n";
 
-    os<<"Moves Learned: "<<obj.moves.size()<<"\n"; // Aratam cate mutari stie
+    os<<"Moves Learned: "<<obj.moves.size()<<"\n";
 
-    // AFISARE STATUS CURENT
     os<<"Status: "<<obj.status<<"\n";
     os<<"Status duration: "<<obj.statusDuration<<"\n";
     return os;
@@ -421,7 +422,7 @@ void Pokemon::learnMove(Move * newMove) {
         std::cout<<"5) Don't learn\n";
         ///TO DO: Try and catch
         std::cin>>option;
-        if (option<=1 && option>=4) {
+        if (option>=1 && option<=4) {
             forgetMove(option-1);
             moves.push_back(newMove);
         }
@@ -451,7 +452,7 @@ void Pokemon::applyStatus(StatusType type, int duration) {
 
 void Pokemon::transferProgressTo(Pokemon* evolvedForm) {
     if (evolvedForm == nullptr) return;
-    evolvedForm->level = this->level; // Nivelul atins
+    evolvedForm->level = this->level;
     evolvedForm->moves = this->moves;
     this->moves.clear();
     evolvedForm->hp = evolvedForm->maxHp;
@@ -472,4 +473,12 @@ void Pokemon::heal() {
 
 std::string Pokemon::getEvolutionName() const{
     return evolutionName;
+}
+
+std::string Pokemon::getName() const {
+    return name;
+}
+
+int Pokemon::getId() const {
+    return id;
 }

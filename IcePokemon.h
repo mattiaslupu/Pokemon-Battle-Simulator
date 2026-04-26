@@ -22,5 +22,4 @@ public:
     ~IcePokemon();
 
     Type getType() const override;
-    Pokemon* evolve() override;
 };

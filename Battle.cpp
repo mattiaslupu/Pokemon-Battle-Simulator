@@ -1,4 +1,5 @@
 #include "Battle.h"
+#include <limits>
 
 Battle::Battle() : player1(nullptr), player2(nullptr), pokedex(nullptr), turnCount(1), isVsAI(false){}
 
@@ -133,6 +134,30 @@ Move *Battle::chooseBestMoveAI(Trainer *computer, Pokemon *target) {
       return bestMove;
 }
 
+Move* Battle::getMoveFromPlayer(Trainer* player) {
+      Pokemon* p = player->getActivePokemon();
+      auto moves = p->getMoves();
+
+      while (true) {
+            std::cout << "\nCe atac foloseste " << p->getName() << "?\n";
+            for (int i = 0; i < (int)moves.size(); i++) {
+                  std::cout << i + 1 << ". " << moves[i]->getName() << "\n";
+            }
+            std::cout << "> ";
+
+            int choice;
+            std::cin >> choice;
+
+            if (std::cin.fail() || choice < 1 || choice > (int)moves.size()) {
+                  std::cout << "Invalid option! Choose a number between 1 and " << moves.size() << ".\n";
+                  std::cin.clear();
+                  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+            else {
+                  return moves[choice - 1];
+            }
+      }
+}
 Trainer* Battle::getWinner() const {
       if (!isOver()) {
             return nullptr;
@@ -149,14 +174,14 @@ Trainer* Battle::getWinner() const {
 void Battle::playTurn() {
       Pokemon* p1Active = player1->getActivePokemon();
       Pokemon* p2Active = player2->getActivePokemon();
-      Move* move1 = Menu::showBattleOptions(player1);
+      Move* move1 = getMoveFromPlayer(player1);
       Move* move2 = nullptr;
 
       if (isVsAI) {
             move2=chooseBestMoveAI(player2, p1Active);
       }
       else {
-            move2=Menu::showBattleOptions(player2);
+            move2 = getMoveFromPlayer(player2);
       }
 
       bool p1First = p1Active->getSpeed() > p2Active->getSpeed();

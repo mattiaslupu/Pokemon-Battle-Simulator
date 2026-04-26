@@ -38,7 +38,5 @@ Type WaterPokemon::getType() const {
     return WATER;
 };
 
-Pokemon *WaterPokemon::evolve() {
-
-    return nullptr;
+WaterPokemon::~WaterPokemon() {
 }

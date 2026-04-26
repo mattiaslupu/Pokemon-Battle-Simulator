@@ -37,6 +37,3 @@ Type RockPokemon::getType() const {
     return ROCK;
 }
 
-Pokemon* RockPokemon::evolve() {
-
-}

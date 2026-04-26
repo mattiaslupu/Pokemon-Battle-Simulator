@@ -1,4 +1,5 @@
 #include "StatusMove.h"
+#include "Pokemon.h"
 
 StatusMove::StatusMove() : Move(), effect(NONE), duration(0) {
     this->category = STATUS;

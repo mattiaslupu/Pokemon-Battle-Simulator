@@ -17,6 +17,7 @@ private:
     void playTurn();
     void checkFaint(Trainer* attacker, Trainer* defender);
     void handlePostBattleRewards(Trainer* winner);
+    Move* getMoveFromPlayer(Trainer* player);
 
 public:
     Battle();

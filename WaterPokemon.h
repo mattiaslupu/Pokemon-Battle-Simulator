@@ -21,5 +21,4 @@ public:
     WaterPokemon& operator=(const WaterPokemon &obj);
     ~WaterPokemon();
     Type getType() const override;
-    Pokemon* evolve() override;
 };
