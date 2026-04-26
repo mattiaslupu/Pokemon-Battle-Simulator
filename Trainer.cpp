@@ -160,24 +160,12 @@ void Trainer::saveToFile(const std::string& filename) const {
 
     for (Pokemon* p : team) {
         if (p == nullptr) continue;
-        file << typeToString(p->getType()) << ","
-             << p->getName() << ","
-             << p->getHp() << ","
-             << p->getMaxHp() << ","
-             << p->getAttack() << ","
-             << p->getDefense() << ","
-             << p->getSpAttack() << ","
-             << p->getSpDefense() << ","
-             << p->getSpeed() << ","
-             << p->getLevel() << ","
-             << p->getEvLevel() << ","
-             << p->getEvolutionName() << "\n";
+        p->save(file);
     }
 
     file.close();
     std::cout << "Progress saved for trainer: " << name << "\n";
 }
-
 
 void Trainer::loadFromFile(const std::string& filename, Pokedex& pokedex) {
     std::ifstream file(filename);

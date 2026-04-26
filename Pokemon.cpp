@@ -607,6 +607,7 @@ void Pokemon::load(std::ifstream& in, std::string firstLine) {
             newMove->setType(static_cast<Type>(std::stoi(mType)));
             newMove->setAccuracy(std::stoi(mAcc));
             newMove->setMaxPP(std::stoi(mPP));
+            newMove->restorePP();
             moves.push_back(newMove);
         }
     }

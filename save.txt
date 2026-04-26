@@ -1,3 +1,5 @@
 Mattias
 1
-Electric,Pikachu,35,35,55,40,50,50,90,1,22,Raichu
+4,Pikachu,35,35,55,40,50,50,90,1,22,Raichu
+1
+SPECIAL,THUNDER,4,100,10,80

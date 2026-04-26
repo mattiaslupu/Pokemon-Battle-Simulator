@@ -372,10 +372,10 @@ void Menu::startBattle() {
 
     delete rival;
     rival = new Trainer("Rival");
-
     for (int i = 0; i < 3; i++) {
         Pokemon* p = pokedex->getRandomPokemon();
         rival->addPokemon(p);
+        assignDefaultMoves(p);
     }
 
     bool isAI = (choice == 1);
@@ -447,4 +447,17 @@ void Menu::removePokemonMenu() {
     catch (const std::exception& e) {
         std::cout << "[System Error]: " << e.what() << "\n";
     }
+}
+
+
+void Menu::assignDefaultMoves(Pokemon* p) {
+    Type t = p->getType();
+
+    AttackMove* physMove = new AttackMove(
+        typeToString(t) + " Tackle", 80, 90,t,15, 15);
+
+    SpAttackMove* specMove = new SpAttackMove(
+        typeToString(t) + " Blast",  65, 95, t, 10,10);
+    p->learnMove(physMove);
+    p->learnMove(specMove);
 }

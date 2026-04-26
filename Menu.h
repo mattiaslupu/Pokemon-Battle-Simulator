@@ -28,6 +28,7 @@ private:
     void showTypeChart() const;
     void editTypeChart();
     void removePokemonMenu();
+    void assignDefaultMoves(Pokemon* p);
 
 public:
     Menu();
