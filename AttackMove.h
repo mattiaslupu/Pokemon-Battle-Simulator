@@ -2,6 +2,7 @@
 #include "PhysicalMove.h"
 
 class AttackMove : public PhysicalMove{
+public:
     AttackMove();
     AttackMove(std::string);
     AttackMove(std::string, int);
@@ -14,6 +15,7 @@ class AttackMove : public PhysicalMove{
     ~AttackMove() override;
     AttackMove& operator=(const AttackMove &obj);
     int getDamage(const Pokemon& attacker, const Pokemon& defender) const override;
+    void save(std::ostream& out) const;
 };
 
 

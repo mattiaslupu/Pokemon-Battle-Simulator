@@ -1,5 +1,6 @@
 #include "StatusMove.h"
 #include "Pokemon.h"
+#include "utils.h"
 
 StatusMove::StatusMove() : Move(), effect(NONE), duration(0) {
     this->category = STATUS;
@@ -53,4 +54,18 @@ int StatusMove::getDamage(const Pokemon& attacker, const Pokemon& defender) cons
 
 void StatusMove::applyEffect(Pokemon& target) {
     target.applyStatus(this->effect, this->duration);
+}
+
+void StatusMove::setEffect(StatusType e) {
+    this->effect = e;
+}
+
+void StatusMove::setDuration(int d) {
+    if (d < 0) this->duration = 0;
+    else this->duration = d;
+}
+
+void StatusMove::save(std::ostream& out) const {
+    out << "STATUS," << name << "," << static_cast<int>(type) << ","
+        << accuracy << "," << maxPp << "," << static_cast<int>(effect) << "," << duration << "\n";
 }

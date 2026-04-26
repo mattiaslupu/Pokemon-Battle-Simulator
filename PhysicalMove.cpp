@@ -41,3 +41,8 @@ PhysicalMove &PhysicalMove::operator=(const PhysicalMove &obj) {
 PhysicalMove::~PhysicalMove() {}
 
 void PhysicalMove::applyEffect(Pokemon& target){}
+
+void PhysicalMove::setPower(int p) {
+    if (p < 0) this->power = 0;
+    else this->power = p;
+}

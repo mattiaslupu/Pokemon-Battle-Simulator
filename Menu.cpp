@@ -4,11 +4,16 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <ctime>
+#include "PhysicalMove.h"
+#include "AttackMove.h"
+#include "SpAttackMove.h"
+#include "StatusMove.h"
 
 Menu::Menu() {
     pokedex = new Pokedex();
     pokedex->loadFromFile("pokemon.txt");
     typeChart = new TypeChart();
+    typeChart->loadFromFile("typechart.txt");
 
 
     player = new Trainer();
@@ -134,20 +139,47 @@ void Menu::showTeam() {
     printSeparator();
     std::cout << "  1. Switch active Pokemon\n";
     std::cout << "  2. Forget a move\n";
-    std::cout << "  3. Heal team\n";
+    std::cout << "  3. Learn a new move\n";
+    std::cout << "  4. Heal team\n";
+    std::cout << "  5. Release a Pokemon\n";
     std::cout << "  0. Back\n  > ";
 
     int choice;
-    std::cin >> choice;
-    std::cin.ignore();
+    if (!(std::cin >> choice)) {
+        std::cin.clear();
+        std::cin.ignore(1000, '\n');
+        std::cout << "  Invalid input! Please enter a number.\n";
+        return;
+    }
+    std::cin.ignore(1000, '\n');
 
-    switch (choice) {
-        case 1: switchPokemonMenu(); break;
-        case 2: forgetMoveMenu();    break;
-        case 3:
-            std::cout << "Team fully healed!\n";
-            break;
-        default: break;
+    try {
+        switch (choice) {
+            case 1:
+                switchPokemonMenu();
+                break;
+            case 2:
+                forgetMoveMenu();
+                break;
+            case 3:
+                learnMoveMenu();
+                break;
+            case 4:
+                player->healTeam();
+                std::cout << "  Team fully healed! Everyone is ready to fight.\n";
+                break;
+            case 5:
+                removePokemonMenu();
+                break;
+            case 0:
+                return;
+            default:
+                std::cout << "  Invalid choice. Try again!\n";
+                break;
+        }
+    }
+    catch (const std::exception& e) {
+        std::cout << "\n  [Operation Failed]: " << e.what() << "\n";
     }
 }
 
@@ -182,12 +214,33 @@ void Menu::switchPokemonMenu() {
     std::cout << "  Switch to Pokemon (1-" << player->getTeamSize() << "): ";
     int index;
     std::cin >> index;
-    std::cin.ignore();
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(1000, '\n');
+        std::cout << "Invalid input!\n";
+        return;
+    }
+    std::cin.ignore(1000, '\n');
 
-    if (!player->switchPokemon(index - 1))
-        std::cout << "Cannot switch — Pokemon fainted!\n";
-    else
-        std::cout << "Switched to " << player->getActivePokemon()->getName() << "!\n";
+    int targetIndex = index - 1;
+
+    try {
+        Pokemon* targetPokemon = player->getPokemon(targetIndex);
+        if (targetPokemon == player->getActivePokemon()) {
+            std::cout << targetPokemon->getName() << " is already out in battle!\n";
+            return;
+        }
+        if (targetPokemon->getHp() <= 0) {
+            std::cout << "Cannot switch — " << targetPokemon->getName() << " fainted!\n";
+            return;
+        }
+        if (player->switchPokemon(targetIndex)) {
+            std::cout << "Switched to " << targetPokemon->getName() << "!\n";
+        }
+
+    } catch (const std::out_of_range& e) {
+        std::cout << "Invalid Pokemon index!\n";
+    }
 }
 
 void Menu::forgetMoveMenu() {
@@ -215,12 +268,95 @@ void Menu::forgetMoveMenu() {
     }
 }
 
+void Menu::learnMoveMenu() {
+    if (player->getTeamSize() == 0) {
+        std::cout << "You have no Pokemon in your team!\n";
+        return;
+    }
+
+    std::cout << "  Choose Pokemon to teach a move to (1-" << player->getTeamSize() << "): ";
+    int pokemonIndex;
+    if (!(std::cin >> pokemonIndex) || pokemonIndex < 1 || pokemonIndex > player->getTeamSize()) {
+        std::cin.clear();
+        std::cin.ignore(1000, '\n');
+        std::cout << "Error: Invalid Pokemon selection.\n";
+        return;
+    }
+    std::cin.ignore(1000, '\n');
+
+    try {
+        Pokemon* p = player->getPokemon(pokemonIndex - 1);
+
+        if (p->getMoves().size() >= 4) {
+            std::cout << "Error: " << p->getName() << " already knows 4 moves!\n";
+            return;
+        }
+
+        std::cout << "\n=== MOVE TUTOR ===\n";
+        std::cout << "Select category:\n1. Physical\n2. Special\n3. Status\n> ";
+        int category;
+        if (!(std::cin >> category)) {
+            std::cin.clear();
+            std::cin.ignore(1000, '\n');
+            std::cout << "Error: Invalid category input.\n";
+            return;
+        }
+        std::cin.ignore(1000, '\n');
+
+        Move* newMove = nullptr;
+
+        if (category == 1 || category == 2) {
+            if (category == 1) newMove = new AttackMove();
+            else newMove = new SpAttackMove();
+            std::cin >> *newMove;
+            std::cout << "  Enter Power (Damage): ";
+            int pwr;
+            if (!(std::cin >> pwr)) {
+                delete newMove;
+                throw std::invalid_argument("Power must be a number!");
+            }
+
+            dynamic_cast<PhysicalMove*>(newMove)->setPower(pwr);
+
+        } else if (category == 3) {
+            StatusMove* sm = new StatusMove();
+            newMove = sm;
+            std::cin >> *newMove;
+            std::cout << "  Enter Status Effect (e.g., BURN, SLEEP): ";
+            std::string eff;
+            std::cin >> eff;
+            sm->setEffect(stringToStatus(eff));
+            std::cout << "  Enter Duration (Turns): ";
+            int dur;
+            if (!(std::cin >> dur)) {
+                delete newMove;
+                throw std::invalid_argument("Duration must be a number!");
+            }
+            sm->setDuration(dur);
+        } else {
+            std::cout << "Error: Invalid category selection.\n";
+            return;
+        }
+        p->learnMove(newMove);
+        std::cout << "\nSuccess! " << p->getName() << " learned " << newMove->getName() << "!\n";
+
+    } catch (const std::exception& e) {
+        std::cout << "System Error: " << e.what() << "\n";
+    }
+}
+
 void Menu::startBattle() {
     if (player->getTeamSize() == 0) {
         std::cout << "You need at least 1 Pokemon to battle!\n";
         return;
     }
-
+    for (int i = 0; i < player->getTeamSize(); i++) {
+        Pokemon* p = player->getPokemon(i);
+        if (p->getMoves().empty()) {
+            std::cout << "Error: " << p->getName() << " has no moves! Teach it a move before battling.\n";
+            return;
+        }
+    }
     printSeparator();
     std::cout << "  BATTLE MODE\n";
     printSeparator();
@@ -274,5 +410,41 @@ void Menu::editTypeChart() {
         std::cout << "Rule updated!\n";
     } catch (std::invalid_argument& e) {
         std::cout << "Error: " << e.what() << "\n";
+    }
+}
+
+void Menu::removePokemonMenu() {
+    try {
+        if (player->getTeamSize() == 0) {
+            throw std::runtime_error("Your team is empty! Capture some Pokemon first.");
+        }
+
+        std::cout << "\n=== RELEASE POKEMON ===\n";
+        for (int i = 0; i < player->getTeamSize(); i++) {
+            std::cout << i + 1 << ". " << player->getPokemon(i)->getName() << "\n";
+        }
+
+        std::cout << "Select (1-" << player->getTeamSize() << ") or 0 to Cancel: ";
+        int choice;
+        if (!(std::cin >> choice)) {
+            std::cin.clear();
+            std::cin.ignore(1000, '\n');
+            throw std::invalid_argument("Input must be a numeric value!");
+        }
+
+        if (choice == 0) return;
+        player->removePokemon(choice - 1);
+
+        std::cout << "Pokemon successfully released.\n";
+
+    }
+    catch (const std::out_of_range& e) {
+        std::cout << "[Index Error]: " << e.what() << "\n";
+    }
+    catch (const std::invalid_argument& e) {
+        std::cout << "[Input Error]: " << e.what() << "\n";
+    }
+    catch (const std::exception& e) {
+        std::cout << "[System Error]: " << e.what() << "\n";
     }
 }

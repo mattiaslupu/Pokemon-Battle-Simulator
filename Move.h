@@ -36,5 +36,23 @@ public:
     void restorePP();
     virtual int getDamage(const Pokemon& attacker, const Pokemon& defender) const = 0;
     virtual void applyEffect(Pokemon& target) = 0;
+    virtual void save(std::ostream& out) const = 0;
+    void setName(const std::string& n) { name = n; }
+    void setType(Type t) { type = t; }
+    void setAccuracy(int acc) {
+        if(acc < 0 || acc > 100) throw std::invalid_argument("Accuracy must be 0-100");
+        accuracy = acc;
+    }
+    void setPP(int pp) {
+        if(pp < 0) throw std::invalid_argument("PP cannot be negative");
+        this->pp=pp;
+    }
+
+    void setMaxPP(int pp) {
+        if(pp < 0) throw std::invalid_argument("PP cannot be negative");
+        this->maxPp=pp;
+    }
+
+
 
 };

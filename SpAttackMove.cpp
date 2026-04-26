@@ -44,3 +44,8 @@ int SpAttackMove::getDamage(const Pokemon& attacker, const Pokemon& defender) co
     double totalDamage = damage * stab;
     return std::max(1, (int)totalDamage);
 }
+
+void SpAttackMove::save(std::ostream& out) const {
+    out << "SPECIAL," << name << "," << static_cast<int>(type) << ","
+        << accuracy << "," << maxPp << "," << power << "\n";
+}

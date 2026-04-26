@@ -1,6 +1,7 @@
 #pragma once
 #include "PhysicalMove.h"
 class SpAttackMove : public PhysicalMove{
+public:
     SpAttackMove();
     SpAttackMove(std::string);
     SpAttackMove(std::string, int);
@@ -13,5 +14,7 @@ class SpAttackMove : public PhysicalMove{
     ~SpAttackMove() override;
     SpAttackMove& operator=(const SpAttackMove &obj);
     int getDamage(const Pokemon& attacker, const Pokemon& defender) const override;
+    void save(std::ostream& out) const;
+
 };
 

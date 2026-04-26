@@ -23,9 +23,11 @@ private:
     void choosePokemon();
     void switchPokemonMenu();
     void forgetMoveMenu();
+    void learnMoveMenu();
     void startBattle();
     void showTypeChart() const;
     void editTypeChart();
+    void removePokemonMenu();
 
 public:
     Menu();

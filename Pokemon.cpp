@@ -4,6 +4,12 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include "AttackMove.h"
+#include "SpAttackMove.h"
+#include "StatusMove.h"
+#include <sstream>
+#include <fstream>
+#include <string>
 
 int Pokemon::noPokemons = 0;
 Pokemon::Pokemon() :id(noPokemons++){
@@ -461,10 +467,16 @@ void Pokemon::learnMove(Move * newMove) {
 }
 
 void Pokemon::forgetMove(int index) {
-    if (index < 0 || index >= (int)moves.size())
-        throw std::out_of_range("Invalid move index: " + std::to_string(index));
-    delete moves[index];
-    moves.erase(moves.begin() + index);
+    if (moves.size() <= 1) {
+        throw std::invalid_argument("A Pokemon cannot forget its last move!");
+    }
+
+    if (index >= 0 && index < moves.size()) {
+        delete moves[index];
+        moves.erase(moves.begin() + index);
+    } else {
+        throw std::out_of_range("Invalid move index!");
+    }
 }
 
 bool Pokemon::isFainted() const {
@@ -513,4 +525,89 @@ std::string Pokemon::getName() const {
 
 int Pokemon::getId() const {
     return id;
+}
+
+
+
+void Pokemon::save(std::ofstream& out) const {
+    out << static_cast<int>(getType()) << ","
+        << name << ","
+        << hp << ","
+        << maxHp << ","
+        << attack << ","
+        << defense << ","
+        << spAttack << ","
+        << spDefense << ","
+        << speed << ","
+        << level << ","
+        << evLevel << ","
+        << evolutionName << "\n";
+
+    out << moves.size() << "\n";
+    for (Move* m : moves) {
+        m->save(out);
+    }
+}
+
+void Pokemon::load(std::ifstream& in, std::string firstLine) {
+    std::stringstream ss(firstLine);
+    std::string token;
+
+    std::getline(ss, token, ','); // type
+    std::getline(ss, name, ',');
+    std::getline(ss, token, ','); hp = std::stoi(token);
+    std::getline(ss, token, ','); maxHp = std::stoi(token);
+    std::getline(ss, token, ','); attack = std::stoi(token);
+    std::getline(ss, token, ','); defense = std::stoi(token);
+    std::getline(ss, token, ','); spAttack = std::stoi(token);
+    std::getline(ss, token, ','); spDefense = std::stoi(token);
+    std::getline(ss, token, ','); speed = std::stoi(token);
+    std::getline(ss, token, ','); level = std::stoi(token);
+    std::getline(ss, token, ','); evLevel = std::stoi(token);
+    std::getline(ss, evolutionName);
+
+    int movesCount = 0;
+    if (!(in >> movesCount)) return;
+    in.ignore(1000, '\n');
+
+    for (Move* m : moves) delete m;
+    moves.clear();
+
+    for (int i = 0; i < movesCount; i++) {
+        std::string mLine;
+        if (!std::getline(in, mLine)) break;
+
+        std::stringstream sm(mLine);
+        std::string tag, mName, mType, mAcc, mPP, extra1, extra2;
+
+        std::getline(sm, tag, ',');
+        std::getline(sm, mName, ',');
+        std::getline(sm, mType, ',');
+        std::getline(sm, mAcc, ',');
+        std::getline(sm, mPP, ',');
+
+        Move* newMove = nullptr;
+        if (tag == "PHYSICAL" || tag == "SPECIAL") {
+            std::getline(sm, extra1, ',');
+            if (tag == "PHYSICAL") newMove = new AttackMove();
+            else newMove = new SpAttackMove();
+            auto* pm = dynamic_cast<PhysicalMove*>(newMove);
+            if (pm) pm->setPower(std::stoi(extra1));
+        } else if (tag == "STATUS") {
+            std::getline(sm, extra1, ',');
+            std::getline(sm, extra2, ',');
+            StatusMove* smObj = new StatusMove();
+            smObj->setEffect(static_cast<StatusType>(std::stoi(extra1)));
+            smObj->setDuration(std::stoi(extra2));
+            newMove = smObj;
+        }
+
+        if (newMove) {
+            newMove->setName(mName);
+            newMove->setType(static_cast<Type>(std::stoi(mType)));
+            newMove->setAccuracy(std::stoi(mAcc));
+            newMove->setMaxPP(std::stoi(mPP));
+            moves.push_back(newMove);
+        }
+    }
 }

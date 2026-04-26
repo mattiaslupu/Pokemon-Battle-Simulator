@@ -63,12 +63,15 @@ public:
     int getLevel() const;
     void setLevel(int);
     int getEvLevel() const;
+    void setMaxPP(int );
     void transferProgressTo(Pokemon*);
     std::string getEvolutionName() const;
     void applyStatus(StatusType type, int duration);
     void heal();
     virtual Type getType() const =0;
     std::vector<Move*> getMoves();
+    void save(std::ofstream& out) const;
+    void load(std::ifstream& in, std::string firstLine);
 };
 
 

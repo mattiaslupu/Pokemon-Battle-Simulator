@@ -44,3 +44,7 @@ int AttackMove::getDamage(const Pokemon& attacker, const Pokemon& defender) cons
     return std::max(1, (int)totalDamage);
 }
 
+void AttackMove::save(std::ostream& out) const {
+    out << "PHYSICAL," << name << "," << static_cast<int>(type) << ","
+        << accuracy << "," << maxPp << "," << power << "\n";
+}

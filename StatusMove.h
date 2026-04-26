@@ -17,14 +17,13 @@ public:
     StatusMove(std::string name, int accuracy, int pp);
     StatusMove(std::string name, int accuracy, int pp, Type type);
     StatusMove(std::string name, int accuracy, int pp, Type type, StatusType effect, int duration);
-
     StatusMove(const StatusMove &obj);
     ~StatusMove();
     StatusMove& operator=(const StatusMove &obj);
-
     int getDamage(const Pokemon& attacker, const Pokemon& defender) const override;
-
     void applyEffect(Pokemon& target) override;
-
-    StatusType getEffect() const { return effect; }
+    void setEffect(StatusType e);
+    void setDuration(int d);
+    StatusType getEffect() const { return effect;}
+    void save(std::ostream& out) const;
 };
