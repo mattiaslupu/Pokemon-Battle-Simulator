@@ -184,50 +184,6 @@ Trainer* Battle::getWinner() const {
       return nullptr;
 }
 
-void Battle::playTurn() {
-      Pokemon* p1Active = player1->getActivePokemon();
-      Pokemon* p2Active = player2->getActivePokemon();
-      if (p1Active == nullptr || p2Active == nullptr)
-            throw std::runtime_error("Active Pokemon is null during turn");
-
-      Move* move1 = getMoveFromPlayer(player1);
-      Move* move2 = nullptr;
-
-      if (isVsAI) {
-            move2 = chooseBestMoveAI(player2, p1Active);
-      } else {
-            move2 = getMoveFromPlayer(player2);
-      }
-
-      if (move1 == nullptr || move2 == nullptr)
-            throw std::runtime_error("Move is null during turn");
-
-      if (isVsAI) {
-            move2=chooseBestMoveAI(player2, p1Active);
-      }
-      else {
-            move2 = getMoveFromPlayer(player2);
-      }
-
-      bool p1First = p1Active->getSpeed() > p2Active->getSpeed();
-      if (p1First) {
-            if (move1) applyDamage(p1Active, p2Active, move1);
-            checkFaint(player1, player2);
-            if (!p2Active->isFainted() && move2) {
-                  applyDamage(p2Active, p1Active, move2);
-                  checkFaint(player2, player1);
-            }
-            else {
-                  if (move2) applyDamage(p2Active, p1Active, move2);
-                  checkFaint(player2, player1);
-
-                  if (!p1Active->isFainted() && move1) {
-                        applyDamage(p1Active, p2Active, move1);
-                        checkFaint(player1, player2);
-                  }
-            }
-      }
-}
 
 
 bool Battle::isOver() const {
@@ -253,4 +209,77 @@ void Battle::start(bool vsAI) {
       } else {
             std::cout << "\n[BATTLE] It's a draw! Both trainers are out of Pokemon!\n";
       }
+}
+
+
+void Battle::displayHUD() {
+    Pokemon* p1A = player1->getActivePokemon();
+    Pokemon* p2A = player2->getActivePokemon();
+
+    if (!p1A || !p2A) return;
+
+    std::cout << "\n========================================" << std::endl;
+    std::cout << player1->getName() << "'s " << p1A->getName()
+              << " HP: " << p1A->getHp() << "/" << p1A->getMaxHp() << std::endl;
+    std::cout << player2->getName() << "'s " << p2A->getName()
+              << " HP: " << p2A->getHp() << "/" << p2A->getMaxHp() << std::endl;
+    std::cout << "========================================\n" << std::endl;
+}
+
+void Battle::playTurn() {
+    Pokemon* p1Active = player1->getActivePokemon();
+    Pokemon* p2Active = player2->getActivePokemon();
+
+    if (p1Active == nullptr || p2Active == nullptr)
+        throw std::runtime_error("Active Pokemon is null during turn");
+
+    displayHUD();
+
+
+    int choice;
+    std::cout << player1->getName() << ", what will you do?\n1. Fight\n2. Switch Pokemon\n> ";
+    std::cin >> choice;
+
+    if (choice == 2) {
+        int newIdx;
+        std::cout << "Enter the index of the Pokemon to switch to: ";
+        std::cin >> newIdx;
+
+        player1->switchPokemon(newIdx);
+        p1Active = player1->getActivePokemon();
+    }
+
+    Move* move1 = getMoveFromPlayer(player1);
+    Move* move2 = nullptr;
+
+    if (isVsAI) {
+        move2 = chooseBestMoveAI(player2, p1Active);
+    } else {
+        move2 = getMoveFromPlayer(player2);
+    }
+
+    if (move1 == nullptr || move2 == nullptr)
+        throw std::runtime_error("Move is null during turn");
+
+    bool p1First = p1Active->getSpeed() >= p2Active->getSpeed();
+
+    if (p1First) {
+
+        applyDamage(p1Active, p2Active, move1);
+        checkFaint(player2, player1);
+
+        if (!p2Active->isFainted()) {
+            applyDamage(p2Active, p1Active, move2);
+            checkFaint(player1, player2);
+        }
+    }
+    else {
+        applyDamage(p2Active, p1Active, move2);
+        checkFaint(player1, player2);
+
+        if (!p1Active->isFainted()) {
+            applyDamage(p1Active, p2Active, move1);
+            checkFaint(player2, player1);
+        }
+    }
 }

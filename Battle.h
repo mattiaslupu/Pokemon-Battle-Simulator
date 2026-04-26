@@ -35,4 +35,6 @@ public:
     bool isOver() const;
     Trainer* getWinner() const;
     Move* chooseBestMoveAI(Trainer* computer, Pokemon* target);
+    void displayHUD();
+    int getBattleChoice(Trainer* t);
 };
