@@ -19,5 +19,6 @@ public:
     Pokemon* getRandomPokemon() const;
     friend std::ostream& operator<<(std::ostream& os, const Pokedex& obj);
     friend std::istream& operator>>(std::istream& is, Pokedex& obj);
+    void saveToFile(const std::string& filename) const;
 
 };

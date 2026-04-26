@@ -1,6 +1,6 @@
 #pragma once
 #include "Pokemon.h"
-
+#include <fstream>
 
 class Pokemon;
 
@@ -31,6 +31,8 @@ public:
     void healTeam();
     void healPokemon(int);
     int getTeamSize();
+    void saveToFile(const std::string& filename) const;
+    void loadFromFile(const std::string& filename, Pokedex& pokedex);
 };
 
 

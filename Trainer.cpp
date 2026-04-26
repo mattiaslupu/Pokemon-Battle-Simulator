@@ -28,24 +28,27 @@ Trainer &Trainer::operator=(const Trainer &obj) {
     return *this;
 }
 
-std::istream &operator>>(std::istream &is, Trainer &obj) {
-    ///To do
+std::istream& operator>>(std::istream& is, Trainer& obj) {
+    std::cout << "Trainer name: ";
+    std::getline(is, obj.name);
+    if (obj.name.empty())
+        throw std::invalid_argument("Trainer name cannot be empty");
     return is;
 }
 
-std::ostream &operator<<(std::ostream &os, const Trainer &obj) {
-    os<<"Id: "<<obj.id;
-    os<<"Name"<<obj.name;
-    if (obj.team.size()>0)
-    {
-        os<<"Team: "<<"/n";
-        for (int i=0; i<obj.team.size(); i++)
-            os<<"Pokemon "<<i+1<<" "<<obj.team[i]->getName()<<"/n";
+std::ostream& operator<<(std::ostream& os, const Trainer& obj) {
+    os << "Id: " << obj.id << "\n";
+    os << "Name: " << obj.name << "\n";
+    if (!obj.team.empty()) {
+        os << "Team:\n";
+        for (int i = 0; i < (int)obj.team.size(); i++)
+            os << "Pokemon " << i + 1 << ": " << obj.team[i]->getName() << "\n";
+        if (obj.activePokemonIndex >= 0 &&
+            obj.activePokemonIndex < (int)obj.team.size())
+            os << "Active: " << obj.team[obj.activePokemonIndex]->getName() << "\n";
+    } else {
+        os << "No Pokemon in team\n";
     }
-    else {
-        os<<"You do not have any Pokemon in your team/n";
-    }
-    os<<"Active Pokemon"<<obj.team[obj.activePokemonIndex];
     return os;
 }
 
@@ -66,17 +69,17 @@ void Trainer::addPokemon(Pokemon * obj) {
     }
 
 }
-
-void Trainer::replacePokemon(int index, Pokemon * newPokemon) {
-    if (index >= 0 && index < team.size()) {
-        team[index] = newPokemon;
-    } else {
-        std::cerr << "Error: Invalid index for replacing Pokemon!\n";
-    }
+void Trainer::replacePokemon(int index, Pokemon* newPokemon) {
+    if (index < 0 || index >= (int)team.size())
+        throw std::out_of_range("Invalid replace index: " + std::to_string(index));
+    if (newPokemon == nullptr)
+        throw std::invalid_argument("Cannot replace with null Pokemon");
+    team[index] = newPokemon;
 }
 
 Pokemon *Trainer::getPokemon(int index) {
-    //Error handle
+    if (index < 0 || index >= (int)team.size())
+        throw std::out_of_range("Invalid Pokemon index: " + std::to_string(index));
     return team[index];
 }
 
@@ -120,15 +123,9 @@ bool Trainer::hasAlivePokemon() {
 }
 
 void Trainer::healPokemon(int index) {
-    if (index<1 || index>team.size()) {
-
-    }
-        //To do
-    else {
-        team[index-1]->heal();
-        std::cout<<"You healed "<<team[index-1]->getName()<<"/n";
-        std::cout<<team[index-1]->getName()<<" is ready to battle again";
-    }
+    if (index < 1 || index > (int)team.size()) throw std::out_of_range("Invalid Pokemon index: " + std::to_string(index));
+    team[index - 1]->heal();
+    std::cout << "You healed " << team[index - 1]->getName() << "\n";
 }
 
 void Trainer::healTeam() {
@@ -143,6 +140,111 @@ int Trainer::getTeamSize() {
     return team.size();
 }
 
-Pokemon *Trainer::getActivePokemon() {
+Pokemon* Trainer::getActivePokemon() {
+    if (team.empty())
+        throw std::runtime_error(name + " has no Pokemon in team");
+    if (activePokemonIndex < 0 || activePokemonIndex >= (int)team.size())
+        throw std::out_of_range("Active Pokemon index out of range");
     return team[activePokemonIndex];
+}
+
+void Trainer::saveToFile(const std::string& filename) const {
+    std::ofstream file(filename);
+    if (!file.is_open())
+        throw std::runtime_error("Cannot open save file: " + filename);
+
+    file << name << "\n";
+    file << team.size() << "\n";
+
+    for (Pokemon* p : team) {
+        if (p == nullptr) continue;
+        file << typeToString(p->getType()) << ","
+             << p->getName() << ","
+             << p->getHp() << ","
+             << p->getMaxHp() << ","
+             << p->getAttack() << ","
+             << p->getDefense() << ","
+             << p->getSpAttack() << ","
+             << p->getSpDefense() << ","
+             << p->getSpeed() << ","
+             << p->getLevel() << ","
+             << p->getEvLevel() << ","
+             << p->getEvolutionName() << "\n";
+    }
+
+    file.close();
+    std::cout << "Progress saved for trainer: " << name << "\n";
+}
+
+
+void Trainer::loadFromFile(const std::string& filename, Pokedex& pokedex) {
+    std::ifstream file(filename);
+    if (!file.is_open())
+        throw std::runtime_error("Save file not found: " + filename);
+
+    std::getline(file, name);
+    if (name.empty())
+        throw std::runtime_error("Invalid save file — empty trainer name");
+
+    int teamSize;
+    file >> teamSize;
+    file.ignore();
+
+    if (teamSize < 0 || teamSize > 6)
+        throw std::runtime_error("Invalid save file — team size out of range: "
+                                 + std::to_string(teamSize));
+    for (Pokemon* p : team) delete p;
+    team.clear();
+    activePokemonIndex = 0;
+
+    for (int i = 0; i < teamSize; i++) {
+        std::string line;
+        std::getline(file, line);
+
+        if (line.empty())
+            throw std::runtime_error("Invalid save file — missing data at Pokemon "
+                                     + std::to_string(i + 1));
+
+        try {
+            std::stringstream ss(line);
+            std::string token, typeStr, pName, evName;
+            int hpCur, hpMax, atk, def, spAtk, spDef, spd, lvl, evLvl;
+
+            std::getline(ss, typeStr, ',');
+            std::getline(ss, pName, ',');
+            std::getline(ss, token, ','); hpCur  = std::stoi(token);
+            std::getline(ss, token, ','); hpMax  = std::stoi(token);
+            std::getline(ss, token, ','); atk    = std::stoi(token);
+            std::getline(ss, token, ','); def    = std::stoi(token);
+            std::getline(ss, token, ','); spAtk  = std::stoi(token);
+            std::getline(ss, token, ','); spDef  = std::stoi(token);
+            std::getline(ss, token, ','); spd    = std::stoi(token);
+            std::getline(ss, token, ','); lvl    = std::stoi(token);
+            std::getline(ss, token, ','); evLvl  = std::stoi(token);
+            std::getline(ss, evName);
+
+            if (hpCur < 0 || hpMax < 0 || lvl < 1)
+                throw std::invalid_argument("Invalid stats for Pokemon: " + pName);
+            Pokemon* p = pokedex.createByName(pName);
+            p->setHp(hpCur);
+            p->setLevel(lvl);
+
+            team.push_back(p);
+
+        } catch (std::invalid_argument& e) {
+            std::cerr << "Warning: Could not load Pokemon " << i + 1
+                      << " — " << e.what() << "\n";
+        } catch (std::out_of_range& e) {
+            std::cerr << "Warning: Number out of range for Pokemon "
+                      << i + 1 << "\n";
+        }
+    }
+
+    file.close();
+
+    if (team.empty())
+        throw std::runtime_error("No Pokemon loaded from save file");
+
+    std::cout << "Progress loaded for trainer: " << name
+              << " (" << team.size() << " Pokemon)\n";
 }

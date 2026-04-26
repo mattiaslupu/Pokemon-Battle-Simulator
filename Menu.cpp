@@ -36,14 +36,12 @@ void Menu::printHpBar(int hp, int maxHp) const {
 
 void Menu::run() {
     srand(static_cast<unsigned int>(time(0)));
-
-    std::cout << "Enter your trainer name: ";
-    std::string name;
-    std::getline(std::cin, name);
-    if (!name.empty()) {
-        player->setName(name);
-    } else {
-        player->setName("Ash");
+    try {
+        player->loadFromFile("save.txt", *pokedex);
+        std::cout << "Save found! Loaded progress for " << player->getName() << ".\n";
+    } catch (std::runtime_error&) {
+        std::cout << "New game!\n";
+        std::cin >> *player;
     }
 
     bool ok = true;
@@ -51,7 +49,13 @@ void Menu::run() {
         showMainMenu();
         int choice;
         std::cin >> choice;
-        std::cin.ignore();
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(1000, '\n');
+            std::cout << "Invalid input. Please enter a number.\n";
+            continue;
+        }
+        std::cin.ignore(1000, '\n');
 
         try {
             switch (choice) {
@@ -61,7 +65,17 @@ void Menu::run() {
                 case 4: startBattle();      break;
                 case 5: showTypeChart();    break;
                 case 6: editTypeChart();    break;
-                case 0: ok = false;         break;
+                case 7:
+                    try {
+                        player->saveToFile("save.txt");
+                        std::cout << "Game saved successfully!\n";
+                    } catch (std::runtime_error& e) {
+                        std::cout << "Could not save: " << e.what() << "\n";
+                    }
+                    break;
+                case 0:
+                    ok = false;
+                    break;
                 default:
                     std::cout << "Invalid option. Try again.\n";
             }
@@ -71,6 +85,14 @@ void Menu::run() {
             std::cout << "Error: " << e.what() << "\n";
         }
     }
+
+    try {
+        player->saveToFile("save.txt");
+        std::cout << "Auto-saved successfully.\n";
+    } catch (std::runtime_error& e) {
+        std::cout << "Could not auto-save: " << e.what() << "\n";
+    }
+
     std::cout << "Goodbye, " << player->getName() << "!\n";
 }
 
@@ -87,6 +109,7 @@ void Menu::showMainMenu() const {
     std::cout << "  4. Start Battle\n";
     std::cout << "  5. View Type Chart\n";
     std::cout << "  6. Edit Type Chart\n";
+    std::cout << "  7. Save Game\n";
     std::cout << "  0. Exit\n";
     printSeparator();
     std::cout << "  > ";

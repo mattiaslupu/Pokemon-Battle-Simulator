@@ -14,8 +14,12 @@ Pokedex::Pokedex() {
 }
 
 Pokedex::Pokedex(std::vector<Pokemon *> data) {
-    for (int i =0; i<data.size(); i++) {
-        entries.push_back(data[i]);
+    if (data.empty()) {
+        return;
+    }
+    for (size_t i = 0; i < data.size(); i++) {
+        if (data[i] != nullptr)
+            entries.push_back(data[i]);
     }
 }
 
@@ -72,6 +76,8 @@ Pokedex::~Pokedex() {
 }
 
 Pokemon *Pokedex::createByName(const std::string &name) const {
+    if (entries.empty())
+        throw std::runtime_error("Pokedex database is empty!");
     for (int i = 0; i < entries.size(); i ++) {
         if (entries[i]->getName() == name) {
             if (entries[i] -> getType() == FIRE) {
@@ -106,6 +112,8 @@ Pokemon *Pokedex::createByName(const std::string &name) const {
 }
 
 Pokemon* Pokedex::getRandomPokemon() const {
+    if (entries.empty())
+        throw std::runtime_error("Cannot get random Pokemon — Pokedex is empty");
     int randomIndex = rand() % entries.size();
     return createByName(entries[randomIndex]->getName());
 }
@@ -147,7 +155,8 @@ Pokedex &Pokedex::operator=(const Pokedex &obj) {
                     entries.push_back(new FireFlyingPokemon(*dynamic_cast<FireFlyingPokemon*>(p)));
                     break;
                 default:
-                    break;
+                    throw std::runtime_error("Unknown Pokemon type during assignment");
+
             }
         }
     }
@@ -158,12 +167,10 @@ void Pokedex::loadFromFile(const std::string& filename) {
     std::ifstream file(filename);
 
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open the file " << filename << "!\n";
-        return;
+        throw std::runtime_error("Critical error: Cannot open file " + filename);
     }
 
     std::string line;
-    int pokemonCount = 0;
 
     while (std::getline(file, line)) {
         if (line.empty()) continue;
@@ -175,16 +182,23 @@ void Pokedex::loadFromFile(const std::string& filename) {
 
         std::getline(ss, name, ',');
         std::getline(ss, typeStr, ',');
-        std::getline(ss, tempStr, ','); hpCur = std::stoi(tempStr);
-        std::getline(ss, tempStr, ','); hpMax = std::stoi(tempStr);
-        std::getline(ss, tempStr, ','); attack = std::stoi(tempStr);
-        std::getline(ss, tempStr, ','); defense = std::stoi(tempStr);
-        std::getline(ss, tempStr, ','); spAtk = std::stoi(tempStr);
-        std::getline(ss, tempStr, ','); spDef = std::stoi(tempStr);
-        std::getline(ss, tempStr, ','); speed = std::stoi(tempStr);
-        std::getline(ss, tempStr, ','); evoLevel = std::stoi(tempStr);
-        std::getline(ss, evolutionName);
+
+        try {
+            std::getline(ss, tempStr, ','); hpCur = std::stoi(tempStr);
+            std::getline(ss, tempStr, ','); hpMax = std::stoi(tempStr);
+            std::getline(ss, tempStr, ','); attack = std::stoi(tempStr);
+            std::getline(ss, tempStr, ','); defense = std::stoi(tempStr);
+            std::getline(ss, tempStr, ','); spAtk = std::stoi(tempStr);
+            std::getline(ss, tempStr, ','); spDef = std::stoi(tempStr);
+            std::getline(ss, tempStr, ','); speed = std::stoi(tempStr);
+            std::getline(ss, tempStr, ','); evoLevel = std::stoi(tempStr);
+            std::getline(ss, evolutionName);
+        } catch (const std::exception&) {
+            throw std::runtime_error("Error: Invalid numeric data in file for Pokemon " + name);
+        }
+
         int currentLevel = 1;
+
         if (typeStr == "FIRE") {
             entries.push_back(new FirePokemon(name, hpCur, hpMax, attack, defense, spAtk, spDef, speed, currentLevel, evoLevel, evolutionName));
         }
@@ -210,16 +224,13 @@ void Pokedex::loadFromFile(const std::string& filename) {
             entries.push_back(new FireFlyingPokemon(name, hpCur, hpMax, attack, defense, spAtk, spDef, speed, currentLevel, evoLevel, evolutionName));
         }
         else {
-            std::cerr << "Warning: Unknown type '" << typeStr << "' for Pokemon " << name << ". Skipping...\n";
-            continue;
+            throw std::runtime_error("Error: Unknown type '" + typeStr + "' for Pokemon '" + name + "' in file!");
         }
-
-        pokemonCount++;
     }
 
     file.close();
-
 }
+
 
 std::ostream& operator<<(std::ostream& os, const Pokedex& obj) {
     os << "\n=== POKEDEX CATALOGUE (" << obj.entries.size() << " Registered Pokemon) ===\n";
@@ -245,10 +256,18 @@ std::istream& operator>>(std::istream& is, Pokedex& obj) {
     is >> type;
 
     std::cout << "Max HP: ";
-    is >> hp;
+    if (!(is >> hp)) {
+        is.clear();
+        is.ignore(1000, '\n');
+        throw std::invalid_argument("Error: HP must be a number!");
+    }
 
     std::cout << "Attack: ";
-    is >> attack;
+    if (!(is >> attack)) {
+        is.clear();
+        is.ignore(1000, '\n');
+        throw std::invalid_argument("Error: Attack must be a number!");
+    }
 
     if (type == "FIRE") {
         obj.entries.push_back(new FirePokemon(name, hp, hp, attack, 50, 50, 50, 50, 100, 0, "NONE"));
@@ -283,8 +302,35 @@ std::istream& operator>>(std::istream& is, Pokedex& obj) {
         std::cout << "Success! " << name << " (FIRE/FLYING) was added to the Pokedex!\n";
     }
     else {
-        std::cout << "Error: Invalid type! The custom Pokemon could not be created.\n";
+        throw std::invalid_argument("Error: Invalid type! Custom Pokemon could not be created.");
     }
 
     return is;
+}
+
+
+void Pokedex::saveToFile(const std::string& filename) const {
+    if (entries.empty())
+        throw std::runtime_error("Cannot save empty Pokedex");
+
+    std::ofstream file(filename);
+    if (!file.is_open())
+        throw std::runtime_error("Cannot open file for saving: " + filename);
+
+    for (Pokemon* p : entries) {
+        if (p == nullptr) continue;
+        file << typeToString(p->getType()) << ","
+             << p->getName() << ","
+             << p->getHp() << ","
+             << p->getMaxHp() << ","
+             << p->getAttack() << ","
+             << p->getDefense() << ","
+             << p->getSpAttack() << ","
+             << p->getSpDefense() << ","
+             << p->getSpeed() << ","
+             << p->getEvLevel() << ","
+             << p->getEvolutionName() << "\n";
+    }
+
+    file.close();
 }

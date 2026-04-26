@@ -54,27 +54,31 @@ Battle &Battle::operator=(const Battle &obj) {
       }
 
 std::istream& operator>>(std::istream& is, Battle& obj) {
+      if (obj.player1 == nullptr || obj.player2 == nullptr)
+            throw std::runtime_error("Cannot configure battle — trainers are null");
+
       std::cout << "Starting turn count (default 1): ";
       is >> obj.turnCount;
-      if (obj.player1 != nullptr && obj.player2 != nullptr) {
-            std::cout << "Match confirmed: " << obj.player1->getName()
-                      << " vs " << obj.player2->getName() << "\n";
-            std::cout << "Are both players ready? (yes/no): ";
-            std::string ready;
-            is >> ready;
-
-            if (ready != "yes") {
-                  std::cout << "Warning: Players marked as NOT READY.\n";
-            }
-      } else {
-            std::cout << "Warning: One or both trainers are missing! Assign them in main.\n";
+      if (is.fail() || obj.turnCount < 1) {
+            is.clear();
+            is.ignore(1000, '\n');
+            throw std::invalid_argument("Turn count must be at least 1");
       }
+
+      std::cout << "Are both players ready? (yes/no): ";
+      std::string ready;
+      is >> ready;
+      if (ready != "yes")
+            throw std::runtime_error("Players not ready — battle cancelled");
 
       return is;
 }
+
 Battle::~Battle(){}
 
 void Battle::applyDamage(Pokemon *attacker, Pokemon *defender, Move* moveUsed) {
+      if (attacker == nullptr || defender == nullptr || moveUsed == nullptr)
+            throw std::invalid_argument("Cannot apply damage — null attacker, defender or move");
       int damage = moveUsed->getDamage(*attacker, *defender);
       if (damage>0) {
             double multiplier = typeChart.getMultiplier(moveUsed->getType(), defender->getType());
@@ -86,6 +90,8 @@ void Battle::applyDamage(Pokemon *attacker, Pokemon *defender, Move* moveUsed) {
 }
 
 void Battle::checkFaint(Trainer* attacker, Trainer* defender) {
+      if (attacker == nullptr || defender == nullptr)
+            throw std::invalid_argument("Cannot check faint — null trainer");
       Pokemon* target = defender->getActivePokemon();
       if (target->isFainted()) {
             std::cout << "\n[BATTLE] " << target->getName() << " has fainted!\n";
@@ -101,6 +107,10 @@ void Battle::checkFaint(Trainer* attacker, Trainer* defender) {
 }
 
 void Battle::handlePostBattleRewards(Trainer *winner) {
+      if (winner == nullptr)
+            throw std::invalid_argument("Winner cannot be null");
+      if (pokedex == nullptr)
+            throw std::runtime_error("Pokedex is null — cannot check evolutions");
       std::cout<<"Congratulations! "<<winner->getName()<<" has won the battle!";
       for (int i=0; i<winner->getTeamSize(); i++) {
             Pokemon*p= winner->getPokemon(i);
@@ -117,9 +127,12 @@ void Battle::handlePostBattleRewards(Trainer *winner) {
 }
 
 Move *Battle::chooseBestMoveAI(Trainer *computer, Pokemon *target) {
-      Pokemon * aiPokemon = computer->getActivePokemon();
-      std::vector<Move*> moves= aiPokemon->getMoves();
-
+      if (computer == nullptr || target == nullptr)
+            throw std::invalid_argument("Cannot choose move — null trainer or target");
+      Pokemon* aiPokemon = computer->getActivePokemon();
+      std::vector<Move*> moves = aiPokemon->getMoves();
+      if (moves.empty())
+            throw std::runtime_error(aiPokemon->getName() + " has no moves");
       if (moves.empty()) return nullptr;
 
       Move* bestMove = moves[0];
@@ -174,8 +187,20 @@ Trainer* Battle::getWinner() const {
 void Battle::playTurn() {
       Pokemon* p1Active = player1->getActivePokemon();
       Pokemon* p2Active = player2->getActivePokemon();
+      if (p1Active == nullptr || p2Active == nullptr)
+            throw std::runtime_error("Active Pokemon is null during turn");
+
       Move* move1 = getMoveFromPlayer(player1);
       Move* move2 = nullptr;
+
+      if (isVsAI) {
+            move2 = chooseBestMoveAI(player2, p1Active);
+      } else {
+            move2 = getMoveFromPlayer(player2);
+      }
+
+      if (move1 == nullptr || move2 == nullptr)
+            throw std::runtime_error("Move is null during turn");
 
       if (isVsAI) {
             move2=chooseBestMoveAI(player2, p1Active);
@@ -210,6 +235,10 @@ bool Battle::isOver() const {
 }
 
 void Battle::start(bool vsAI) {
+      if (player1 == nullptr || player2 == nullptr)
+            throw std::runtime_error("Cannot start battle — trainer is null");
+      if (!player1->hasAlivePokemon() || !player2->hasAlivePokemon())
+            throw std::runtime_error("Cannot start battle — a trainer has no alive Pokemon");
       this->isVsAI = vsAI;
       std::cout << "\n=== BATTLE START! ===\n";
       std::cout << player1->getName() << " VS " << player2->getName() << "\n\n";

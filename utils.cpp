@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 Type stringToType(const std::string &str) {
-    if (str=="NORMAL") return NORMAL;
+    if (str == "NORMAL") return NORMAL;
     if (str == "FIRE") return FIRE;
     if (str == "WATER") return WATER;
     if (str == "GRASS") return GRASS;
@@ -12,7 +12,7 @@ Type stringToType(const std::string &str) {
     if (str == "ROCK") return ROCK;
     if (str == "FLYING") return FLYING;
     if (str == "FIRE_FLYING") return FIRE_FLYING;
-    throw std::invalid_argument("Error: Type '" + str + "' does not exist or it has arlready been written");
+    throw std::invalid_argument("Invalid type: " + str);
 }
 
 std::string typeToString(Type t) {
@@ -31,17 +31,16 @@ std::string typeToString(Type t) {
 }
 MoveCategory stringToCategory(const std::string& str) {
     if (str == "PHYSICAL") return PHYSICAL;
+    if (str == "SPECIAL") return SPECIAL;
     if (str == "STATUS") return STATUS;
-
-    throw std::invalid_argument("Error: Category '" + str + "' is not valid.");
+    throw std::invalid_argument("Invalid category: " + str);
 }
 StatusType stringToStatus(const std::string& str)
 {
     if (str == "NONE") return NONE;
     if (str == "BURN") return BURN;
-    if (str == "PARALYSIS") return PARALYSIS;
     if (str == "SLEEP") return SLEEP;
+    if (str == "PARALYSIS") return PARALYSIS;
     if (str == "POISON") return POISON;
-
-    throw std::invalid_argument("Error: Status '" + str + "' is not valid.");
+    throw std::invalid_argument("Invalid status: " + str);
 }

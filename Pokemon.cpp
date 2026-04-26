@@ -270,6 +270,8 @@ int Pokemon::getHp() const {
     return hp;
 }
 void Pokemon::setHp(int newHp) {
+    if (newHp < 0)
+        throw std::invalid_argument("HP cannot be negative: " + std::to_string(newHp));
     hp = newHp;
 }
 
@@ -301,6 +303,8 @@ int Pokemon::getLevel() const {
     return level;
 }
 void Pokemon::setLevel(int newLevel) {
+    if (newLevel < 1)
+        throw std::invalid_argument("Level must be >= 1: " + std::to_string(newLevel));
     level = newLevel;
 }
 
@@ -309,7 +313,6 @@ int Pokemon::getEvLevel() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Pokemon &obj) {
-    ///TO DO: Error handle
     os<<"Id: "<<obj.getId()<<"\n";
     os<<"Name: "<<obj.getName()<<"\n";
     os<<"Attack: "<<obj.getAttack()<<"\n";
@@ -334,60 +337,76 @@ std::ostream& operator<<(std::ostream& os, const Pokemon &obj) {
     return os;
 }
 
-std::istream& operator>>(std::istream &is, Pokemon &obj) {
-    //TO DO: error handling
+std::istream& operator>>(std::istream& is, Pokemon& obj) {
     std::string name;
-    int hp;
-    int maxHp;
-    int attack;
-    int defense;
-    int spAttack;
-    int spDefense;
-    int speed;
-    int level;
-    int evLevel;
-    std::cout<<"Name: ";
-    is>>name;
+    int hp, maxHp, attack, defense, spAttack, spDefense, speed, level, evLevel, statusInput;
+
+    std::cout << "Name: ";
+    is >> name;
+    if (name.empty()) throw std::invalid_argument("Name cannot be empty");
     obj.setName(name);
-    std::cout<<"HP: ";
-    is>>hp;
+
+    std::cout << "HP: ";
+    is >> hp;
+    if (is.fail() || hp < 0) throw std::invalid_argument("HP must be non-negative");
     obj.setHp(hp);
-    std::cout<<"Max HP: ";
+
+    std::cout << "Max HP: ";
     is >> maxHp;
-    obj.maxHp=maxHp;
-    std::cout<<"Attack: ";
-    is>>attack;
-    obj.attack=attack;
-    std::cout<<"Defense";
-    is>>defense;
-    obj.defense=defense;
-    std::cout<<"Special Attack: ";
-    is>>spAttack;
-    obj.spAttack=spAttack;
-    std::cout<<"Special Defense: ";
-    is>>spDefense;
-    obj.spDefense=spDefense;
-    std::cout<<"Speed: ";
-    is>>speed;
-    obj.speed=speed;
-    std::cout<<"Level: ";
-    is>>level;
+    if (is.fail() || maxHp < hp) throw std::invalid_argument("Max HP cannot be less than HP");
+    obj.maxHp = maxHp;
+
+    std::cout << "Attack: ";
+    is >> attack;
+    if (is.fail() || attack < 0) throw std::invalid_argument("Attack must be non-negative");
+    obj.attack = attack;
+
+    std::cout << "Defense: ";
+    is >> defense;
+    if (is.fail() || defense < 0) throw std::invalid_argument("Defense must be non-negative");
+    obj.defense = defense;
+
+    std::cout << "Special Attack: ";
+    is >> spAttack;
+    if (is.fail() || spAttack < 0) throw std::invalid_argument("SpAttack must be non-negative");
+    obj.spAttack = spAttack;
+
+    std::cout << "Special Defense: ";
+    is >> spDefense;
+    if (is.fail() || spDefense < 0) throw std::invalid_argument("SpDefense must be non-negative");
+    obj.spDefense = spDefense;
+
+    std::cout << "Speed: ";
+    is >> speed;
+    if (is.fail() || speed < 0) throw std::invalid_argument("Speed must be non-negative");
+    obj.speed = speed;
+
+    std::cout << "Level: ";
+    is >> level;
+    if (is.fail()) throw std::invalid_argument("Level must be a number");
     obj.setLevel(level);
-    std::cout<<"Evolution level: ";
-    is>>evLevel;
-    obj.evLevel=evLevel;
-    std::cout<<"Evolution Name: ";
+
+    std::cout << "Evolution Level (-1 if none): ";
+    is >> evLevel;
+    if (is.fail()) throw std::invalid_argument("Evolution level must be a number");
+    obj.evLevel = evLevel;
+
+    std::cout << "Evolution Name (none if none): ";
     std::string evName;
-    is>>evName;
-    obj.evolutionName=evName;
-    int statusInput;
-    std::cout << "Current Status (0=NONE, 1=BURN, 2=SLEEP, 3=PARALYSIS, 4=POISON): ";
+    is >> evName;
+    obj.evolutionName = evName;
+
+    std::cout << "Status (0=NONE,1=BURN,2=SLEEP,3=PARALYSIS,4=POISON): ";
     is >> statusInput;
+    if (is.fail() || statusInput < 0 || statusInput > 4)
+        throw std::invalid_argument("Status must be between 0 and 4");
     obj.status = static_cast<StatusType>(statusInput);
 
     if (obj.status != NONE) {
-        std::cout << "Durata statusului (cate ture mai are): ";
+        std::cout << "Status duration: ";
         is >> obj.statusDuration;
+        if (is.fail() || obj.statusDuration < 0)
+            throw std::invalid_argument("Status duration must be non-negative");
     } else {
         obj.statusDuration = 0;
     }
@@ -395,7 +414,10 @@ std::istream& operator>>(std::istream &is, Pokemon &obj) {
 }
 
 void Pokemon::takeDamage(int damage) {
-    hp-=damage;
+    if (damage < 0)
+        throw std::invalid_argument("Damage cannot be negative: " + std::to_string(damage));
+    hp -= damage;
+    if (hp < 0) hp = 0;
 }
 
 void Pokemon::levelUp() {
@@ -410,30 +432,37 @@ void Pokemon::levelUp() {
 }
 
 void Pokemon::learnMove(Move * newMove) {
+    if (newMove == nullptr)
+        throw std::invalid_argument("Cannot learn a null move");
     int option;
-    if (moves.size()<4) {
+    if (moves.size() < 4) {
         moves.push_back(newMove);
-    }
-    else {
-        std::cout<<name<<" already has 4 moves\n<<Which move do you want to forget?\n";
-        for (int i=0; i<moves.size(); i++) {
-            std::cout<<i+1<<") "<<moves[i]->getName()<<"\n";
+    } else {
+        std::cout << name << " already has 4 moves\nWhich move to forget?\n";
+        for (int i = 0; i < (int)moves.size(); i++)
+            std::cout << i + 1 << ") " << moves[i]->getName() << "\n";
+        std::cout << "5) Don't learn\n";
+        std::cin >> option;
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(1000, '\n');
+            throw std::invalid_argument("Invalid input — expected a number");
         }
-        std::cout<<"5) Don't learn\n";
-        ///TO DO: Try and catch
-        std::cin>>option;
-        if (option>=1 && option<=4) {
-            forgetMove(option-1);
+        if (option >= 1 && option <= 4) {
+            forgetMove(option - 1);
             moves.push_back(newMove);
-        }
-        else if (option == 5) {
-            std::cout<<"Gave up on learning "<<newMove->getName();
+        } else if (option == 5) {
+            std::cout << "Gave up on learning " << newMove->getName() << "\n";
             delete newMove;
+        } else {
+            throw std::invalid_argument("Option must be between 1 and 5");
         }
     }
 }
 
 void Pokemon::forgetMove(int index) {
+    if (index < 0 || index >= (int)moves.size())
+        throw std::out_of_range("Invalid move index: " + std::to_string(index));
     delete moves[index];
     moves.erase(moves.begin() + index);
 }
@@ -444,6 +473,8 @@ bool Pokemon::isFainted() const {
 }
 
 void Pokemon::applyStatus(StatusType type, int duration) {
+    if (duration < 0)
+        throw std::invalid_argument("Status duration cannot be negative");
     if (this->status == NONE) {
         this->status = type;
         this->statusDuration = duration;
@@ -451,7 +482,8 @@ void Pokemon::applyStatus(StatusType type, int duration) {
 }
 
 void Pokemon::transferProgressTo(Pokemon* evolvedForm) {
-    if (evolvedForm == nullptr) return;
+    if (evolvedForm == nullptr)
+        throw std::invalid_argument("Cannot transfer progress to null Pokemon");
     evolvedForm->level = this->level;
     evolvedForm->moves = this->moves;
     this->moves.clear();
@@ -464,11 +496,11 @@ std::vector<Move *> Pokemon::getMoves() {
 }
 
 void Pokemon::heal() {
-    hp=maxHp;
-    status=NONE;
-    for (int i=1; i<moves.size(); i++) {
+    hp = maxHp;
+    status = NONE;
+    statusDuration = 0;
+    for (int i = 0; i < (int)moves.size(); i++)
         moves[i]->restorePP();
-    }
 }
 
 std::string Pokemon::getEvolutionName() const{
