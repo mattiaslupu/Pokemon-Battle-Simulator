@@ -444,12 +444,20 @@ void Menu::removePokemonMenu() {
 
 void Menu::assignDefaultMoves(Pokemon* p) {
     Type t = p->getType();
-
+    Type t1=t;
+    Type t2=t;
+    if (t == FIRE_FLYING) {
+        t1=FIRE;
+        t2 =FLYING;
+        if (rand() % 2==0) {
+            std::swap(t1, t2);
+        }
+    }
     AttackMove* physMove = new AttackMove(
-        typeToString(t) + " Tackle", 80, 90,t,15, 15);
+        typeToString(t1) + " Tackle", 80, 90,t,15, 15);
 
     SpAttackMove* specMove = new SpAttackMove(
-        typeToString(t) + " Blast",  65, 95, t, 10,10);
+        typeToString(t2) + " Blast",  65, 95, t, 10,10);
     p->learnMove(physMove);
     p->learnMove(specMove);
 }
