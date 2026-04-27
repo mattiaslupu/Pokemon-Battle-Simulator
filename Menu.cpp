@@ -345,6 +345,10 @@ void Menu::startBattle() {
         std::cout << "You need at least 1 Pokemon to battle!\n";
         return;
     }
+    if (!player->hasAlivePokemon()) {
+        std::cout << "All your Pokemon have fainted! Go to the team menu to heal them before battling.\n";
+        return;
+    }
     for (int i = 0; i < player->getTeamSize(); i++) {
         Pokemon* p = player->getPokemon(i);
         if (p->getMoves().empty()) {

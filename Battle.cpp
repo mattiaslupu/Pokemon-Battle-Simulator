@@ -5,6 +5,7 @@
 #include "AttackMove.h"
 #include "StatusMove.h"
 #include "SpAttackMove.h"
+#include <cstdlib>
 
 Battle::Battle() : player1(nullptr), player2(nullptr), pokedex(nullptr), turnCount(1), isVsAI(false){typeChart.loadFromFile("typechart.txt");}
 
@@ -83,49 +84,60 @@ Battle::~Battle(){}
 
 void Battle::applyDamage(Pokemon* attacker, Pokemon* defender, Move* move) {
       if (!move || !attacker || !defender) return;
-      int baseDamage = 0;
-      auto* phys = dynamic_cast<PhysicalMove*>(move);
-      auto* spec = dynamic_cast<SpAttackMove*>(move);
-      if (phys) baseDamage = phys->getPower();
-      else if (spec) baseDamage = spec->getPower();
-      if (baseDamage <= 0) {
-            std::cout << attacker->getName() << " used " << move->getName() << "!\n";
+      if (attacker->getStatus() == SLEEP) {
+            std::cout << "\n> " << attacker->getName() << " is fast asleep and cannot move!\n";
             return;
       }
+      if (attacker->getStatus() == PARALYSIS) {
+            if (rand() % 4 == 0) {
+                  std::cout << "\n> " << attacker->getName() << " is fully paralyzed and cannot move!\n";
+                  return;
+            }
+      }
+      try {
+            move->useMove();
+      } catch (const std::runtime_error& e) {
+            std::cout << attacker->getName() << " a incercat sa foloseasca " << move->getName() << " dar nu mai are PP!\n";
+            return;
+      }
+      std::cout << "\n> " << attacker->getName() << " used " << move->getName() << "!\n";
+      if (move->getCategory() == STATUS) {
+            move->applyEffect(*defender);
+            return;
+      }
+      int baseDamage = move->getDamage(*attacker, *defender);
       double multiplier = 1.0;
       try {
             multiplier = typeChart.getMultiplier(move->getType(), defender->getType());
       } catch (...) {
             multiplier = 1.0;
       }
-      int atkStat = attacker->getAttack();
-      int defStat = (defender->getDefense() > 0) ? defender->getDefense() : 1;
-      int finalDamage = static_cast<int>((baseDamage * atkStat / (double)defStat) * multiplier / 50.0);
-      if (finalDamage < 1) finalDamage = 1;
+      int finalDamage = std::max(1, static_cast<int>(baseDamage * multiplier));
       defender->takeDamage(finalDamage);
-      std::cout << attacker->getName() << " used " << move->getName() << "!\n";
       if (multiplier > 1.0) std::cout << "  It's super effective!\n";
       else if (multiplier < 1.0 && multiplier > 0) std::cout << "  It's not very effective...\n";
+      else if (multiplier == 0) std::cout << "  It has no effect...\n";
       std::cout << "  " << defender->getName() << " lost " << finalDamage << " HP ("
                 << defender->getHp() << " remaining).\n";
 }
 
 void Battle::handlePostBattleRewards(Trainer *winner) {
-      if (winner == nullptr)
-            throw std::invalid_argument("Winner cannot be null");
-      if (pokedex == nullptr)
-            throw std::runtime_error("Pokedex is null — cannot check evolutions");
-      std::cout<<"Congratulations! "<<winner->getName()<<" has won the battle!";
-      for (int i=0; i<winner->getTeamSize(); i++) {
-            Pokemon*p= winner->getPokemon(i);
-            if (p->getLevel()>=p->getEvLevel() && p->getEvolutionName()!="NONE") {
-                  std::cout<<p->getName()<<" is evolving! ...\n";
-                  std::cout<<"Your "<<p->getName()<<" has evolved into a "<<p->getEvolutionName()<<"\n";
-                  Pokemon * evolved = pokedex ->createByName(p->getEvolutionName());
+      if (winner == nullptr) throw std::invalid_argument("Winner cannot be null");
+      if (pokedex == nullptr) throw std::runtime_error("Pokedex is null — cannot check evolutions");
+      std::cout << "\nCongratulations! " << winner->getName() << " has won the battle!\n";
+      for (int i = 0; i < winner->getTeamSize(); i++) {
+            Pokemon* p = winner->getPokemon(i);
+            if (p->getHp() > 0) {
+                  p->levelUp();
+                  std::cout << p->getName() << " leveled up to level " << p->getLevel() << "!\n";
+            }
+            if (p->getLevel() >= p->getEvLevel() && p->getEvolutionName() != "NONE" && p->getEvLevel() > 0) {
+                  std::cout << "\n" << p->getName() << " is evolving! ...\n";
+                  std::cout << "Your " << p->getName() << " has evolved into a " << p->getEvolutionName() << "!\n";
+                  Pokemon * evolved = pokedex->createByName(p->getEvolutionName());
                   p->transferProgressTo(evolved);
                   winner->replacePokemon(i, evolved);
                   delete p;
-
             }
       }
 }
@@ -157,23 +169,24 @@ Move* Battle::chooseBestMoveAI(Trainer* computer, Pokemon* target) {
 Move* Battle::getMoveFromPlayer(Trainer* player) {
       Pokemon* p = player->getActivePokemon();
       auto moves = p->getMoves();
-
       while (true) {
-            std::cout << "\nCe atac foloseste " << p->getName() << "?\n";
+            std::cout << "\nWhat move does " << p->getName() << " use?\n";
             for (int i = 0; i < (int)moves.size(); i++) {
-                  std::cout << i + 1 << ". " << moves[i]->getName() << "\n";
+                  std::cout << i + 1 << ". " << moves[i]->getName()
+                            << " (PP: " << moves[i]->getPP() << "/" << moves[i]->getMaxPP() << ")\n";
             }
             std::cout << "> ";
-
             int choice;
             std::cin >> choice;
-
             if (std::cin.fail() || choice < 1 || choice > (int)moves.size()) {
                   std::cout << "Invalid option! Choose a number between 1 and " << moves.size() << ".\n";
                   std::cin.clear();
-                  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            }
-            else {
+                  std::cin.ignore(1000, '\n');
+            } else {
+                  if (moves[choice - 1]->getPP() <= 0) {
+                        std::cout << "You do no have PP left for this move! Choose a different move\n";
+                        continue;
+                  }
                   return moves[choice - 1];
             }
       }
@@ -269,10 +282,16 @@ void Battle::playTurn() {
       displayHUD();
       int choice1 = getBattleChoice(player1);
       if (choice1 == 2) {
-            int newIdx;
-            std::cout << "Enter the index of the Pokemon to switch to: ";
-            std::cin >> newIdx;
-            player1->switchPokemon(newIdx);
+            bool validSwitch = false;
+            while (!validSwitch) {
+                  int newIdx;
+                  std::cout << "Enter the index of the Pokemon to switch to: ";
+                  if (std::cin >> newIdx) {
+                        validSwitch = player1->switchPokemon(newIdx);
+                  } else {
+                        std::cin.clear(); std::cin.ignore(1000, '\n');
+                  }
+            }
             p1Active = player1->getActivePokemon();
       }
       Move* move1 = (choice1 == 1) ? getMoveFromPlayer(player1) : nullptr;
@@ -282,36 +301,71 @@ void Battle::playTurn() {
       } else {
             int choice2 = getBattleChoice(player2);
             if (choice2 == 2) {
-                  int newIdx;
-                  std::cout << "Enter the index of the Pokemon to switch to: ";
-                  std::cin >> newIdx;
-                  player2->switchPokemon(newIdx);
+                  bool validSwitch = false;
+                  while (!validSwitch) {
+                        int newIdx;
+                        std::cout << "Enter the index of the Pokemon to switch to: ";
+                        if (std::cin >> newIdx) {
+                              validSwitch = player2->switchPokemon(newIdx);
+                        } else {
+                              std::cin.clear(); std::cin.ignore(1000, '\n');
+                        }
+                  }
                   p2Active = player2->getActivePokemon();
             }
             if (choice2 == 1) move2 = getMoveFromPlayer(player2);
       }
+
       bool p1First = p1Active->getSpeed() >= p2Active->getSpeed();
+
       if (p1First) {
             if (move1) applyDamage(p1Active, p2Active, move1);
-
             if (p2Active->getHp() > 0) {
                   if (move2) applyDamage(p2Active, p1Active, move2);
             } else {
                   checkFaint(player2, player1);
             }
-
             if (p1Active->getHp() <= 0) checkFaint(player1, player2);
       }
       else {
             if (move2) applyDamage(p2Active, p1Active, move2);
-
             if (p1Active->getHp() > 0) {
                   if (move1) applyDamage(p1Active, p2Active, move1);
             } else {
                   checkFaint(player1, player2);
             }
-
             if (p2Active->getHp() <= 0) checkFaint(player2, player1);
+      }
+
+      if (!isOver()) {
+            if (p1Active->getHp() > 0 && p1Active->getStatus() != NONE) {
+                  if (p1Active->getStatus() == BURN || p1Active->getStatus() == POISON) {
+                        int dmg = std::max(1, p1Active->getMaxHp() / 8);
+                        p1Active->takeDamage(dmg);
+                        std::cout << p1Active->getName() << " takes " << dmg << " damage from its status condition!\n";
+                  }
+                  p1Active->decrementStatusDuration();
+                  if (p1Active->getStatus() == NONE) {
+                        std::cout << p1Active->getName() << " has recovered from its status condition!\n";
+                  }
+                  if (p1Active->getHp() <= 0) {
+                        checkFaint(player1, player2);
+                  }
+            }
+            if (p2Active->getHp() > 0 && p2Active->getStatus() != NONE) {
+                  if (p2Active->getStatus() == BURN || p2Active->getStatus() == POISON) {
+                        int dmg = std::max(1, p2Active->getMaxHp() / 8);
+                        p2Active->takeDamage(dmg);
+                        std::cout << p2Active->getName() << " takes " << dmg << " damage from its status condition!\n";
+                  }
+                  p2Active->decrementStatusDuration();
+                  if (p2Active->getStatus() == NONE) {
+                        std::cout << p2Active->getName() << " has recovered from its status condition!\n";
+                  }
+                  if (p2Active->getHp() <= 0) {
+                        checkFaint(player2, player1);
+                  }
+            }
       }
 }
 

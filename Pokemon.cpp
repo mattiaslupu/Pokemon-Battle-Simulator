@@ -603,3 +603,19 @@ void Pokemon::load(std::ifstream& in, std::string firstLine) {
         }
     }
 }
+StatusType Pokemon::getStatus() const {
+    return status;
+}
+
+int Pokemon::getStatusDuration() const {
+    return statusDuration;
+}
+
+void Pokemon::decrementStatusDuration() {
+    if (statusDuration > 0) {
+        statusDuration--;
+    }
+    if (statusDuration == 0) {
+        status = NONE;
+    }
+}

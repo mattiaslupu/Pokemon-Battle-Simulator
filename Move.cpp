@@ -61,6 +61,10 @@ int Move::getPP() const {
     return pp;
 }
 
+int Move::getMaxPP() const {
+    return maxPp;
+}
+
 Move::~Move() {}
 
 Move &Move::operator=(const Move &obj) {

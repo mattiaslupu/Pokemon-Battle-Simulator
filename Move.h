@@ -53,6 +53,7 @@ public:
         if(pp < 0) throw std::invalid_argument("PP cannot be negative");
         this->maxPp=pp;
     }
+    int getMaxPP() const;
 
 
 

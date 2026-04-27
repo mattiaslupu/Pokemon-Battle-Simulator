@@ -61,7 +61,7 @@ Pokedex::Pokedex(const Pokedex &obj) {
                 break;
 
             default:
-                std::cerr << "Eroare: Tip de Pokemon necunoscut la copiere!\n";
+                std::cerr << "Error: Unknown Pokemon type at copy!\n";
                 break;
         }
     }

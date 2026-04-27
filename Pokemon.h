@@ -72,6 +72,9 @@ public:
     std::vector<Move*> getMoves();
     void save(std::ofstream& out) const;
     void load(std::ifstream& in, std::string firstLine);
+    StatusType getStatus() const;
+    int getStatusDuration() const;
+    void decrementStatusDuration();
 };
 
 
