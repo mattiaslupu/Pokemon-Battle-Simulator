@@ -97,7 +97,7 @@ void Battle::applyDamage(Pokemon* attacker, Pokemon* defender, Move* move) {
       try {
             move->useMove();
       } catch (const std::runtime_error& e) {
-            std::cout << attacker->getName() << " a incercat sa foloseasca " << move->getName() << " dar nu mai are PP!\n";
+            std::cout << attacker->getName() << " tried to use " << move->getName() << " but does not have any PP left!\n";
             return;
       }
       std::cout << "\n> " << attacker->getName() << " used " << move->getName() << "!\n";
@@ -123,7 +123,7 @@ void Battle::applyDamage(Pokemon* attacker, Pokemon* defender, Move* move) {
 
 void Battle::handlePostBattleRewards(Trainer *winner) {
       if (winner == nullptr) throw std::invalid_argument("Winner cannot be null");
-      if (pokedex == nullptr) throw std::runtime_error("Pokedex is null — cannot check evolutions");
+      if (pokedex == nullptr) throw std::runtime_error("Pokedex is null, cannot check evolutions");
       std::cout << "\nCongratulations! " << winner->getName() << " has won the battle!\n";
       for (int i = 0; i < winner->getTeamSize(); i++) {
             Pokemon* p = winner->getPokemon(i);
@@ -279,6 +279,15 @@ void Battle::playTurn() {
       Pokemon* p1Active = player1->getActivePokemon();
       Pokemon* p2Active = player2->getActivePokemon();
       if (!p1Active || !p2Active) return;
+      if (p1Active->getHp() <= 0) {
+            if (checkFaint(player1, player2)) return;
+            p1Active = player1->getActivePokemon();
+      }
+
+      if (p2Active->getHp() <= 0) {
+            if (checkFaint(player2, player1)) return;
+            p2Active = player2->getActivePokemon();
+      }
       displayHUD();
       int choice1 = getBattleChoice(player1);
       if (choice1 == 2) {
@@ -371,18 +380,30 @@ void Battle::playTurn() {
 
 int Battle::getBattleChoice(Trainer* t) {
       int choice;
+      bool canSwitch = false;
+      for(int i = 0; i < t->getTeamSize(); i++) {
+            if (t->getPokemon(i) != t->getActivePokemon() && t->getPokemon(i)->getHp() > 0) {
+                  canSwitch = true;
+                  break;
+            }
+      }
       while (true) {
-            std::cout << t->getName() << ", what will you do?\n";
+            std::cout << "\n" << t->getName() << ", what will you do?\n";
             std::cout << "1. Fight\n";
-            std::cout << "2. Switch Pokemon\n";
+            if (canSwitch) {
+                  std::cout << "2. Switch Pokemon\n";
+            }
             std::cout << "> ";
 
             std::cin >> choice;
-
-            if (std::cin.fail() || (choice != 1 && choice != 2)) {
+            if (std::cin.fail() || choice < 1 || choice > 2 || (choice == 2 && !canSwitch)) {
                   std::cin.clear();
                   std::cin.ignore(1000, '\n');
-                  std::cout << "Invalid option! Choose 1 or 2.\n";
+                  if (choice == 2 && !canSwitch) {
+                        std::cout << "You have no other Pokemon able to fight!\n";
+                  } else {
+                        std::cout << "Invalid option! Choose 1" << (canSwitch ? " or 2.\n" : ".\n");
+                  }
             } else {
                   return choice;
             }

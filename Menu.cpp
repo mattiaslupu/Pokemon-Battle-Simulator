@@ -276,12 +276,6 @@ void Menu::learnMoveMenu() {
 
     try {
         Pokemon* p = player->getPokemon(pokemonIndex - 1);
-
-        if (p->getMoves().size() >= 4) {
-            std::cout << "Error: " << p->getName() << " already knows 4 moves!\n";
-            return;
-        }
-
         std::cout << "\n=== MOVE TUTOR ===\n";
         std::cout << "Select category:\n1. Physical\n2. Special\n3. Status\n> ";
         int category;
@@ -333,7 +327,6 @@ void Menu::learnMoveMenu() {
             return;
         }
         p->learnMove(newMove);
-        std::cout << "\nSuccess! " << p->getName() << " learned " << newMove->getName() << "!\n";
 
     } catch (const std::exception& e) {
         std::cout << "System Error: " << e.what() << "\n";

@@ -1,0 +1,10 @@
+Mattias
+2
+Venusaur,3,80,80,82,83,100,100,80,32,0,NONE,
+2
+PHYSICAL,VineWhip,1,100,25,45
+SPECIAL,RazorLeaf,1,95,25,55
+Charmeleon,1,0,64,58,58,80,65,80,35,36,Charizard,
+2
+PHYSICAL,FirePunch,0,100,15,75
+SPECIAL,Flamethrower,0,100,15,90

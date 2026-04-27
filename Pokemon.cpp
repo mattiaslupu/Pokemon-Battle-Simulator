@@ -443,6 +443,7 @@ void Pokemon::learnMove(Move * newMove) {
     int option;
     if (moves.size() < 4) {
         moves.push_back(newMove);
+        std::cout << "\nSuccess! " << name << " learned " << newMove->getName() << "!\n";
     } else {
         std::cout << name << " already has 4 moves\nWhich move to forget?\n";
         for (int i = 0; i < (int)moves.size(); i++)
@@ -457,6 +458,7 @@ void Pokemon::learnMove(Move * newMove) {
         if (option >= 1 && option <= 4) {
             forgetMove(option - 1);
             moves.push_back(newMove);
+            std::cout << "\nSuccess! " << name << " learned " << newMove->getName() << "!\n";
         } else if (option == 5) {
             std::cout << "Gave up on learning " << newMove->getName() << "\n";
             delete newMove;
@@ -547,7 +549,7 @@ void Pokemon::load(std::ifstream& in, std::string firstLine) {
     std::string token;
 
     std::getline(ss, name, ',');
-    std::getline(ss, token, ',');     // Sărim peste tip (e setat de Pokedex)
+    std::getline(ss, token, ',');
     std::getline(ss, token, ','); hp = std::stoi(token);
     std::getline(ss, token, ','); maxHp = std::stoi(token);
     std::getline(ss, token, ','); attack = std::stoi(token);
@@ -557,7 +559,7 @@ void Pokemon::load(std::ifstream& in, std::string firstLine) {
     std::getline(ss, token, ','); speed = std::stoi(token);
     std::getline(ss, token, ','); level = std::stoi(token);
     std::getline(ss, token, ','); evLevel = std::stoi(token);
-    std::getline(ss, evolutionName, ','); // Citim până la virgula de control
+    std::getline(ss, evolutionName, ',');
 
     int movesCount = 0;
     if (!(in >> movesCount)) return;
@@ -599,6 +601,7 @@ void Pokemon::load(std::ifstream& in, std::string firstLine) {
             newMove->setType(static_cast<Type>(std::stoi(mType)));
             newMove->setAccuracy(std::stoi(mAcc));
             newMove->setMaxPP(std::stoi(mPP));
+            newMove->restorePP();
             moves.push_back(newMove);
         }
     }
