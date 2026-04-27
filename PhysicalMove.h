@@ -21,6 +21,7 @@ public:
     virtual int getDamage(const Pokemon& attacker, const Pokemon& defender) const = 0 ;
     void applyEffect(Pokemon& target) override;
     void setPower(int );
+    int getPower();
 };
 
 

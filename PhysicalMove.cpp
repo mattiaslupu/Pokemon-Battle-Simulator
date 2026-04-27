@@ -46,3 +46,7 @@ void PhysicalMove::setPower(int p) {
     if (p < 0) this->power = 0;
     else this->power = p;
 }
+
+int PhysicalMove::getPower() {
+    return power;
+}

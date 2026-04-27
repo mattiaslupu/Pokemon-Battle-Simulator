@@ -41,20 +41,12 @@ void Menu::printHpBar(int hp, int maxHp) const {
 
 void Menu::run() {
     srand(static_cast<unsigned int>(time(0)));
-    try {
-        player->loadFromFile("save.txt", *pokedex);
-        std::cout << "Save found! Loaded progress for " << player->getName() << ".\n";
-    } catch (std::runtime_error&) {
-        std::cout << "New game!\n";
-        std::cin >> *player;
-    }
-
+    this->initGame();
     bool ok = true;
     while (ok) {
         showMainMenu();
         int choice;
-        std::cin >> choice;
-        if (std::cin.fail()) {
+        if (!(std::cin >> choice)) {
             std::cin.clear();
             std::cin.ignore(1000, '\n');
             std::cout << "Invalid input. Please enter a number.\n";
@@ -84,9 +76,7 @@ void Menu::run() {
                 default:
                     std::cout << "Invalid option. Try again.\n";
             }
-        } catch (std::invalid_argument& e) {
-            std::cout << "Error: " << e.what() << "\n";
-        } catch (std::out_of_range& e) {
+        } catch (const std::exception& e) {
             std::cout << "Error: " << e.what() << "\n";
         }
     }
@@ -94,8 +84,8 @@ void Menu::run() {
     try {
         player->saveToFile("save.txt");
         std::cout << "Auto-saved successfully.\n";
-    } catch (std::runtime_error& e) {
-        std::cout << "Could not auto-save: " << e.what() << "\n";
+    } catch (const std::exception& e) {
+        std::cout << "Could not auto-save.\n";
     }
 
     std::cout << "Goodbye, " << player->getName() << "!\n";
@@ -315,8 +305,13 @@ void Menu::learnMoveMenu() {
                 delete newMove;
                 throw std::invalid_argument("Power must be a number!");
             }
-
-            dynamic_cast<PhysicalMove*>(newMove)->setPower(pwr);
+            if (category == 1) {
+                auto* phys = dynamic_cast<PhysicalMove*>(newMove);
+                if (phys) phys->setPower(pwr);
+            } else {
+                auto* spec = dynamic_cast<SpAttackMove*>(newMove);
+                if (spec) spec->setPower(pwr);
+            }
 
         } else if (category == 3) {
             StatusMove* sm = new StatusMove();
@@ -460,4 +455,21 @@ void Menu::assignDefaultMoves(Pokemon* p) {
         typeToString(t) + " Blast",  65, 95, t, 10,10);
     p->learnMove(physMove);
     p->learnMove(specMove);
+}
+
+void Menu::initGame() {
+    try {
+        player->loadFromFile("save.txt", *pokedex);
+        std::cout << "Welcome back, " << player->getName() << "!\n";
+    }
+    catch (const std::exception& e) {
+        std::cout << "\n[NEW ADVENTURE] No valid save found.\n";
+        std::string n;
+        std::cout << "What is your name, Trainer? ";
+        std::getline(std::cin >> std::ws, n);
+        player->setName(n);
+        std::cout << "Welcome, " << n << "! It's time to choose your first Pokemon:\n";
+        this->choosePokemon();
+        std::cout << "\nPerfect! Your journey begins now.\n";
+    }
 }

@@ -16,7 +16,6 @@ private:
 
     void printSeparator() const;
     void printHpBar(int hp, int maxHp) const;
-
     void showMainMenu() const;
     void showTeam();
     void showPokedex() const;
@@ -29,6 +28,7 @@ private:
     void editTypeChart();
     void removePokemonMenu();
     void assignDefaultMoves(Pokemon* p);
+    void initGame();
 
 public:
     Menu();

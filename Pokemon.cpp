@@ -528,21 +528,14 @@ int Pokemon::getId() const {
 }
 
 
-
 void Pokemon::save(std::ofstream& out) const {
-    out << static_cast<int>(getType()) << ","
-        << name << ","
-        << hp << ","
-        << maxHp << ","
-        << attack << ","
-        << defense << ","
-        << spAttack << ","
-        << spDefense << ","
-        << speed << ","
-        << level << ","
-        << evLevel << ","
-        << evolutionName << "\n";
-
+    out << name << ","
+        << static_cast<int>(getType()) << ","
+        << hp << "," << maxHp << ","
+        << attack << "," << defense << ","
+        << spAttack << "," << spDefense << ","
+        << speed << "," << level << ","
+        << evLevel << "," << evolutionName << ",\n";
     out << moves.size() << "\n";
     for (Move* m : moves) {
         m->save(out);
@@ -553,8 +546,8 @@ void Pokemon::load(std::ifstream& in, std::string firstLine) {
     std::stringstream ss(firstLine);
     std::string token;
 
-    std::getline(ss, token, ','); // type
     std::getline(ss, name, ',');
+    std::getline(ss, token, ',');     // Sărim peste tip (e setat de Pokedex)
     std::getline(ss, token, ','); hp = std::stoi(token);
     std::getline(ss, token, ','); maxHp = std::stoi(token);
     std::getline(ss, token, ','); attack = std::stoi(token);
@@ -564,7 +557,7 @@ void Pokemon::load(std::ifstream& in, std::string firstLine) {
     std::getline(ss, token, ','); speed = std::stoi(token);
     std::getline(ss, token, ','); level = std::stoi(token);
     std::getline(ss, token, ','); evLevel = std::stoi(token);
-    std::getline(ss, evolutionName);
+    std::getline(ss, evolutionName, ','); // Citim până la virgula de control
 
     int movesCount = 0;
     if (!(in >> movesCount)) return;
@@ -576,7 +569,6 @@ void Pokemon::load(std::ifstream& in, std::string firstLine) {
     for (int i = 0; i < movesCount; i++) {
         std::string mLine;
         if (!std::getline(in, mLine)) break;
-
         std::stringstream sm(mLine);
         std::string tag, mName, mType, mAcc, mPP, extra1, extra2;
 
@@ -607,7 +599,6 @@ void Pokemon::load(std::ifstream& in, std::string firstLine) {
             newMove->setType(static_cast<Type>(std::stoi(mType)));
             newMove->setAccuracy(std::stoi(mAcc));
             newMove->setMaxPP(std::stoi(mPP));
-            newMove->restorePP();
             moves.push_back(newMove);
         }
     }

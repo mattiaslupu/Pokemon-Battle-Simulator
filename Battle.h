@@ -15,7 +15,7 @@ private:
     bool isVsAI;
     void applyDamage(Pokemon* attacker, Pokemon* defender, Move*);
     void playTurn();
-    void checkFaint(Trainer* attacker, Trainer* defender);
+    bool checkFaint(Trainer* attacker, Trainer* defender);
     void handlePostBattleRewards(Trainer* winner);
     Move* getMoveFromPlayer(Trainer* player);
 

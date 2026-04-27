@@ -170,37 +170,44 @@ void Trainer::saveToFile(const std::string& filename) const {
 void Trainer::loadFromFile(const std::string& filename, Pokedex& pokedex) {
     std::ifstream file(filename);
     if (!file.is_open())
-        throw std::runtime_error("Save file not found: " + filename);
+        throw std::runtime_error("Save file not found");
 
-    std::getline(file, name);
+    if (!std::getline(file, name) || name.empty()) {
+        throw std::runtime_error("Save file is empty or invalid");
+    }
     int teamSize;
-    file >> teamSize;
+    if (!(file >> teamSize)) {
+        throw std::runtime_error("Corrupted team size in save file");
+    }
     file.ignore(1000, '\n');
-
     for (Pokemon* p : team) delete p;
     team.clear();
     activePokemonIndex = 0;
-
     for (int i = 0; i < teamSize; i++) {
         std::string line;
-        if (!std::getline(file, line)) break;
+        if (!std::getline(file, line) || line.empty()) break;
 
         std::stringstream ss(line);
-        std::string typeStr, pName;
-        std::getline(ss, typeStr, ',');
-        std::getline(ss, pName, ',');
+        std::string pName;
+        if (!std::getline(ss, pName, ',')) continue;
 
         try {
             Pokemon* p = pokedex.createByName(pName);
-            p->load(file, line);
-            team.push_back(p);
-        } catch (...) {
-            std::cerr << "Warning: Could not load Pokemon " << i + 1 << "\n";
+            if (p) {
+                p->load(file, line);
+                team.push_back(p);
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Warning: Could not load Pokemon " << pName << ": " << e.what() << "\n";
         }
     }
 
     file.close();
-    if (team.empty()) throw std::runtime_error("No Pokemon loaded");
+
+    if (team.empty()) {
+        throw std::runtime_error("No Pokemon could be loaded from file");
+    }
+
     std::cout << "Loaded: " << name << " (" << team.size() << " Pokemon)\n";
 }
 
@@ -216,3 +223,4 @@ void Trainer::removePokemon(int index) {
     delete team[index];
     team.erase(team.begin() + index);
 }
+
