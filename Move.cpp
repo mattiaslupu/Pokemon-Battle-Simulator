@@ -113,11 +113,6 @@ std::istream& operator>>(std::istream& is, Move& obj) {
     if (is.fail() || obj.pp < 0)
         throw std::invalid_argument("PP cannot be negative");
     obj.maxPp = obj.pp;
-
-    std::cout << "Category (PHYSICAL/SPECIAL/STATUS): ";
-    is >> categoryStr;
-    obj.category = stringToCategory(categoryStr);
-
     is.ignore();
     return is;
 }
