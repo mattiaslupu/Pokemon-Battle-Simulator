@@ -319,8 +319,8 @@ void Pokedex::saveToFile(const std::string& filename) const {
 
     for (Pokemon* p : entries) {
         if (p == nullptr) continue;
-        file << typeToString(p->getType()) << ","
-             << p->getName() << ","
+        file << p->getName() << ","
+             << typeToStringUpper(p->getType()) << ","
              << p->getHp() << ","
              << p->getMaxHp() << ","
              << p->getAttack() << ","

@@ -7,6 +7,7 @@ enum MoveCategory { PHYSICAL, SPECIAL, STATUS };
 enum StatusType { NONE, BURN, SLEEP, PARALYSIS, POISON };
 
 Type stringToType(const std::string& str);
-std::string typeToString(Type t);
+std::string typeToString(Type );
 MoveCategory stringToCategory(const std::string& str);
 StatusType stringToStatus(const std::string& str);
+std::string typeToStringUpper(Type );

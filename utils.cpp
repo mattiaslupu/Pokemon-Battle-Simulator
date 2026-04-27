@@ -44,3 +44,17 @@ StatusType stringToStatus(const std::string& str)
     if (str == "POISON") return POISON;
     throw std::invalid_argument("Invalid status: " + str);
 }
+
+std::string typeToStringUpper(Type t) {
+    switch (t) {
+        case FIRE:       return "FIRE";
+        case WATER:      return "WATER";
+        case GRASS:      return "GRASS";
+        case ELECTRIC:   return "ELECTRIC";
+        case ICE:        return "ICE";
+        case ROCK:       return "ROCK";
+        case FLYING:     return "FLYING";
+        case FIRE_FLYING:return "FIRE_FLYING";
+        default:         return "NORMAL";
+    }
+}

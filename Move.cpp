@@ -57,6 +57,10 @@ Move::Move(const Move &obj): id(noMoves++){
     this->category=obj.category;
 }
 
+int Move::getPP() const {
+    return pp;
+}
+
 Move::~Move() {}
 
 Move &Move::operator=(const Move &obj) {

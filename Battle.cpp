@@ -98,7 +98,10 @@ void Battle::applyDamage(Pokemon* attacker, Pokemon* defender, Move* move) {
       } catch (...) {
             multiplier = 1.0;
       }
-      int finalDamage = static_cast<int>(baseDamage * multiplier);
+      int atkStat = attacker->getAttack();
+      int defStat = (defender->getDefense() > 0) ? defender->getDefense() : 1;
+      int finalDamage = static_cast<int>((baseDamage * atkStat / (double)defStat) * multiplier / 50.0);
+      if (finalDamage < 1) finalDamage = 1;
       defender->takeDamage(finalDamage);
       std::cout << attacker->getName() << " used " << move->getName() << "!\n";
       if (multiplier > 1.0) std::cout << "  It's super effective!\n";
@@ -240,6 +243,7 @@ void Battle::start(bool vsAI) {
       Trainer* currentWinner = nullptr;
       if (player1->hasAlivePokemon()) currentWinner = player1;
       else currentWinner = player2;
+      handlePostBattleRewards(currentWinner);
       std::cout << "\n*** WINNER: " << currentWinner->getName() << " ***\n";
 }
 
